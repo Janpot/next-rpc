@@ -1,0 +1,29 @@
+{
+  "name": "next-rpc",
+  "version": "1.0.0",
+  "description": "Call serverside code from the browser in next.js applications",
+  "main": "lib",
+  "repository": "https://github.com/Janpot/next-rpc",
+  "author": "Jan Potoms",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/babel__core": "^7.1.6",
+    "@types/execa": "^2.0.0",
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.5",
+    "@types/puppeteer": "^2.0.1",
+    "execa": "^4.0.0",
+    "jest": "^25.2.3",
+    "next": "^9.3.2",
+    "next.js": "^1.0.3",
+    "puppeteer": "^2.1.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "babel-loader": "^8.1.0"
+  }
+}
