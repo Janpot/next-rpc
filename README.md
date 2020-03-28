@@ -4,7 +4,7 @@ Call your API functions straight from the browser.
 
 **Example:**
 
-```js
+```tsx
 // ./pages/api/myApi.js
 export const config = { rpc: true };
 
@@ -47,7 +47,7 @@ npm install -S next-rpc
 configure next.js to use the module
 
 
-```js
+```tsx
 // ./next.config.js
 const withRpc = require('next-rpc')
 module.exports = withRpc();
@@ -57,7 +57,7 @@ module.exports = withRpc();
 
 RPC API modules are modules that only export functions. the functions can only accept and return JSON serializable values. To configure an API handler to work as an RPC module, just export a `config` object with a property `rpc: true`. Now you can import and call these methods from the browser as well.
 
-```js
+```tsx
 export const config = { rpc: true };
 
 export async function capitalize (str) {
