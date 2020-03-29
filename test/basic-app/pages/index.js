@@ -3,7 +3,7 @@ import { echo } from './api/rpc-route';
 export async function getServerSideProps() {
   return {
     props: {
-      data: (await echo('foo', 'bar')).join(' '),
+      data: await echo('foo', 'bar'),
     },
   };
 }
@@ -11,14 +11,12 @@ export async function getServerSideProps() {
 export default function Index(props) {
   const [data, setData] = React.useState();
   React.useEffect(() => {
-    (async () => {
-      setData((await echo('baz', 'quux')).join(' '));
-    })();
+    echo('baz', 'quux').then(setData);
   }, []);
   return (
     <div>
-      <div id="ssr">{props.data}</div>
-      {data ? <div id="browser">{data}</div> : null}
+      <div id="ssr">{props.data.join(' ')}</div>
+      {data ? <div id="browser">{data.join(' ')}</div> : null}
     </div>
   );
 }
