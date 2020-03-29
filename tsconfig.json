@@ -2,15 +2,8 @@
   "compilerOptions": {
     "allowJs": true,
     "strict": true,
-    "noEmit": true,
+    "noEmit": true
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["node_modules"],
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

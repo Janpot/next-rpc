@@ -8,31 +8,27 @@ Call your API functions straight from the browser.
 // ./pages/api/myApi.js
 export const config = { rpc: true };
 
-export async function capitalize (str) {
+export async function capitalize(str) {
   return str[0].upperCase() + str.slice(1);
 }
 
 // ./pages/index.js
 import { capitalize } from './api/myApi';
 
-export function getServerSideProps () {
+export function getServerSideProps() {
   return {
     props: {
       // call your API functions serverside
-      firstName: await capitalize('john')
-    }
+      firstName: await capitalize('john'),
+    },
   };
 }
 
-export default function Index ({ firstName }) {
-  const [lastName, setLastName] =  React.useState();
+export default function Index({ firstName }) {
+  const [lastName, setLastName] = React.useState();
   // And also call your API functions browserside!
   React.useEffect(() => capitalize('doe').then(setLastName));
-  return (
-    <div>
-      Hi I'm {firstName, lastName}
-    </div>
-  );
+  return <div>Hi I'm {(firstName, lastName)}</div>;
 }
 ```
 
@@ -46,10 +42,9 @@ npm install -S next-rpc
 
 configure next.js to use the module
 
-
 ```tsx
 // ./next.config.js
-const withRpc = require('next-rpc')
+const withRpc = require('next-rpc');
 module.exports = withRpc();
 ```
 
@@ -60,7 +55,7 @@ RPC API modules are modules that only export functions. the functions can only a
 ```tsx
 export const config = { rpc: true };
 
-export async function capitalize (str) {
+export async function capitalize(str) {
   return str[0].upperCase() + str.slice(1);
 }
 ```

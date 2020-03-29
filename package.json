@@ -17,12 +17,15 @@
     "jest-circus": "^25.2.3",
     "next": "^9.3.2",
     "next.js": "^1.0.3",
+    "prettier": "^2.0.2",
     "puppeteer": "^2.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
   "scripts": {
     "test": "jest --testRunner='jest-circus/runner'",
+    "fix": "$npm_execpath prettier --write",
+    "prettier": "prettier --check \"**/*.{js,ts,jsx,tsx,json,yml,md}\"",
     "next": "next"
   },
   "dependencies": {
