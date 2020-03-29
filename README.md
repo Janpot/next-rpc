@@ -1,6 +1,8 @@
 # next-rpc
 
-> Call your API functions straight from the browser.
+> `next-rpc` makes exported functions from API routes accessible in the browser. Just import your API function and call it anywhere you want.
+
+## Usage
 
 Next.js 9.3 introduced [`getServerSideProps` and `getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching). New ways of calling serverside code and transfer the data to the browser. a pattern emerged for sharing API routes serverside and browserside. In short the idea is to abstract the logic into an exported function for serverside code and expose the function to the browser through an API handler.
 
