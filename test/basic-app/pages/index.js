@@ -14,11 +14,11 @@ export default function Index (props) {
     (async () => {
       setData((await echo('baz', 'quux')).join(' '))
     })()
-  })
+  }, [])
   return (
     <div>
       <div id='ssr'>{props.data}</div>
-      { data ? <div id='browser'>{data}</div> : null}
+      {data ? <div id='browser'>{data}</div> : null}
     </div>
   )
 }

@@ -4191,6 +4191,28 @@ jest-changed-files@^25.2.3:
     execa "^3.2.0"
     throat "^5.0.0"
 
+jest-circus@^25.2.3:
+  version "25.2.3"
+  resolved "https://registry.yarnpkg.com/jest-circus/-/jest-circus-25.2.3.tgz#b20bea94b4448cce5b2c56229bd0e424aec4dd6b"
+  integrity sha512-Zvs+cBzGvBDF5qTl3BJrBMxTft3Q6vQQjiQiDp0wUKDPEUk4M8Oyq6tCdz+qDlFaV3/p7XNZzA6MXjQABcUiRg==
+  dependencies:
+    "@babel/traverse" "^7.1.0"
+    "@jest/environment" "^25.2.3"
+    "@jest/test-result" "^25.2.3"
+    "@jest/types" "^25.2.3"
+    chalk "^3.0.0"
+    co "^4.6.0"
+    expect "^25.2.3"
+    is-generator-fn "^2.0.0"
+    jest-each "^25.2.3"
+    jest-matcher-utils "^25.2.3"
+    jest-message-util "^25.2.3"
+    jest-snapshot "^25.2.3"
+    jest-util "^25.2.3"
+    pretty-format "^25.2.3"
+    stack-utils "^1.0.1"
+    throat "^5.0.0"
+
 jest-cli@^25.2.3:
   version "25.2.3"
   resolved "https://registry.yarnpkg.com/jest-cli/-/jest-cli-25.2.3.tgz#47e17240ce6d8ce824ca1a01468ea8824ec6b139"

@@ -17,7 +17,7 @@ async function appReady (stdout) {
 }
 
 async function buildNext (path) {
-  await execa('next', ['build'], {
+  return execa('next', ['build'], {
     preferLocal: true,
     cwd: path
   });
@@ -30,16 +30,22 @@ async function startNext (path) {
   });
   await appReady(app.stdout);
   return {
+    url: 'http://localhost:3000/',
     kill: (...args) => app.kill(...args)
   };
 }
 
 describe('basic-app', () => {
+  /**
+   * @type {import('puppeteer').Browser}
+   */
   let browser
 
   beforeAll(async () => {
-    await buildNext(path.resolve(__dirname, '../'));
-    browser = await puppeteer.launch()
+    await Promise.all([
+      buildNext(path.resolve(__dirname, '../')),
+      puppeteer.launch().then(b => browser = b)
+    ]);
   }, 30000);
 
   afterAll(async () => {
@@ -52,7 +58,7 @@ describe('basic-app', () => {
     const app = await startNext(path.resolve(__dirname, '../'));
     const page = await browser.newPage()
     try {
-      await page.goto('http://localhost:3000/');
+      await page.goto(new URL('/', app.url));
       const ssrData = await page.$eval('#ssr', el => el.textContent);
       expect(ssrData).toBe('foo bar')
       await page.waitForSelector('#browser')
@@ -64,5 +70,21 @@ describe('basic-app', () => {
         page.close()
       ]);
     }
-  }, 30000)
+  })
+
+  test('should pass all allowed syntaxes', async () => {
+    const app = await startNext(path.resolve(__dirname, '../'));
+    const page = await browser.newPage()
+    try {
+      await page.goto(new URL('/syntax', app.url));
+      await page.waitForSelector('#results')
+      const browserData = await page.$eval('#results', el => el.textContent);
+      expect(browserData).toBe('1 2 3 4')
+    } finally {
+      await Promise.all([
+        app.kill(),
+        page.close()
+      ]);
+    }
+  })
 })

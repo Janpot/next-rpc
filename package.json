@@ -14,6 +14,7 @@
     "@types/puppeteer": "^2.0.1",
     "execa": "^4.0.0",
     "jest": "^25.2.3",
+    "jest-circus": "^25.2.3",
     "next": "^9.3.2",
     "next.js": "^1.0.3",
     "puppeteer": "^2.1.1",
@@ -21,7 +22,8 @@
     "react-dom": "^16.13.1"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --testRunner='jest-circus/runner'",
+    "next": "next"
   },
   "dependencies": {
     "babel-loader": "^8.1.0"
