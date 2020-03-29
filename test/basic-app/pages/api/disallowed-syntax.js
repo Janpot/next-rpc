@@ -22,7 +22,7 @@ export const notAsyncFunctionExpr = function () {
 }
 /**/
 
-
+/* TEST "exporting a non-static function"
 async function myFunction() {
   return 1;
 }
