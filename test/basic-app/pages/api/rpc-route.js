@@ -6,6 +6,6 @@ export async function echo(...params) {
   return params;
 }
 
-export const throws = async function (message, code) {
+export async function throws(message, code) {
   throw Object.assign(new Error(message), { code });
-};
+}

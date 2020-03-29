@@ -86,6 +86,19 @@ describe('basic-app', () => {
     }
   });
 
+  test('should reject on errors', async () => {
+    const app = await startNext(FIXTURE_PATH);
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/throws', app.url));
+      await page.waitForSelector('#error');
+      const error = await page.$eval('#error', (el) => el.textContent);
+      expect(error).toBe('the message : THE_CODE');
+    } finally {
+      await Promise.all([app.kill(), page.close()]);
+    }
+  });
+
   test('should pass all allowed syntaxes', async () => {
     const app = await startNext(FIXTURE_PATH);
     const page = await browser.newPage();
