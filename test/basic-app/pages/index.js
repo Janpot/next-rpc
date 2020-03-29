@@ -1,4 +1,4 @@
-import { echo } from './api/rpc-file';
+import { echo } from './api/rpc-route';
 
 export async function getServerSideProps () {
   return {
