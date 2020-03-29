@@ -1,6 +1,6 @@
 {
   "name": "next-rpc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Call serverside code from the browser in next.js applications",
   "main": "lib",
   "repository": "https://github.com/Janpot/next-rpc",
