@@ -4,6 +4,19 @@ const puppeteer = require('puppeteer');
 const { Writable } = require('stream');
 const { promises: fs } = require('fs');
 
+const FIXTURE_PATH = path.resolve(__dirname, '../');
+
+async function withEnabledTest(filepath, test, assertions) {
+  const content = await fs.readFile(filepath, { encoding: 'utf-8' });
+  const newContent = content.replace(`/* TEST "${test}"`, '');
+  try {
+    await fs.writeFile(filepath, newContent, { encoding: 'utf-8' });
+    await assertions();
+  } finally {
+    await fs.writeFile(filepath, content, { encoding: 'utf-8' });
+  }
+}
+
 async function appReady(stdout) {
   return new Promise((resolve) => {
     stdout.pipe(
@@ -46,7 +59,7 @@ describe('basic-app', () => {
 
   beforeAll(async () => {
     await Promise.all([
-      buildNext(path.resolve(__dirname, '../')),
+      buildNext(FIXTURE_PATH),
       puppeteer.launch().then((b) => (browser = b)),
     ]);
   }, 30000);
@@ -54,12 +67,12 @@ describe('basic-app', () => {
   afterAll(async () => {
     await Promise.all([
       browser && browser.close(),
-      fs.rmdir(path.resolve(__dirname, '../.next'), { recursive: true }),
+      fs.rmdir(path.resolve(FIXTURE_PATH, './.next'), { recursive: true }),
     ]);
   });
 
   test('should call the rpc method everywhere', async () => {
-    const app = await startNext(path.resolve(__dirname, '../'));
+    const app = await startNext(FIXTURE_PATH);
     const page = await browser.newPage();
     try {
       await page.goto(new URL('/', app.url));
@@ -74,7 +87,7 @@ describe('basic-app', () => {
   });
 
   test('should pass all allowed syntaxes', async () => {
-    const app = await startNext(path.resolve(__dirname, '../'));
+    const app = await startNext(FIXTURE_PATH);
     const page = await browser.newPage();
     try {
       await page.goto(new URL('/syntax', app.url));
@@ -85,4 +98,74 @@ describe('basic-app', () => {
       await Promise.all([app.kill(), page.close()]);
     }
   });
+
+  test('should fail on non function export', async () => {
+    await withEnabledTest(
+      path.resolve(FIXTURE_PATH, './pages/api/disallowed-syntax.js'),
+      'exporting a non-function',
+      async () => {
+        const build = buildNext(FIXTURE_PATH);
+        await expect(build).rejects.toHaveProperty(
+          'message',
+          expect.stringMatching('rpc exports must be static functions')
+        );
+      }
+    );
+  }, 10000);
+
+  test('should fail on non-async function export', async () => {
+    await withEnabledTest(
+      path.resolve(FIXTURE_PATH, './pages/api/disallowed-syntax.js'),
+      'exporting a non-async function',
+      async () => {
+        const build = buildNext(FIXTURE_PATH);
+        await expect(build).rejects.toHaveProperty(
+          'message',
+          expect.stringMatching('rpc exports must be declared "async"')
+        );
+      }
+    );
+  }, 10000);
+
+  test('should fail on non-async arrow function export', async () => {
+    await withEnabledTest(
+      path.resolve(FIXTURE_PATH, './pages/api/disallowed-syntax.js'),
+      'exporting a non-async arrow function',
+      async () => {
+        const build = buildNext(FIXTURE_PATH);
+        await expect(build).rejects.toHaveProperty(
+          'message',
+          expect.stringMatching('rpc exports must be declared "async"')
+        );
+      }
+    );
+  }, 10000);
+
+  test('should fail on non-async function expression export', async () => {
+    await withEnabledTest(
+      path.resolve(FIXTURE_PATH, './pages/api/disallowed-syntax.js'),
+      'exporting a non-async function expression',
+      async () => {
+        const build = buildNext(FIXTURE_PATH);
+        await expect(build).rejects.toHaveProperty(
+          'message',
+          expect.stringMatching('rpc exports must be declared "async"')
+        );
+      }
+    );
+  }, 10000);
+
+  test('should fail on non-static function export', async () => {
+    await withEnabledTest(
+      path.resolve(FIXTURE_PATH, './pages/api/disallowed-syntax.js'),
+      'exporting a non-static function',
+      async () => {
+        const build = buildNext(FIXTURE_PATH);
+        await expect(build).rejects.toHaveProperty(
+          'message',
+          expect.stringMatching('rpc exports must be static functions')
+        );
+      }
+    );
+  }, 10000);
 });
