@@ -74,9 +74,9 @@ export default async (req, res) => {
 };
 ```
 
-This pattern is great as it avoids hitting the network when used serverside. Unfortunaly, to use it client side it still involves a lot of ceremony. i.e. a http request handler needs to be set up, `fetch` needs to be used in the browser, the input and output needs to be correctly encoded and decoded. Error handling needs to be set up to deal with network related errors. If you use typescript you need to find a way to propagate teh types from API to fetch result. etc...
+This pattern is great as it avoids hitting the network when used serverside. Unfortunaly, to use it client side it still involves a lot of ceremony. i.e. a http request handler needs to be set up, `fetch` needs to be used in the browser, the input and output needs to be correctly encoded and decoded. Error handling needs to be set up to deal with network related errors. If you use typescript you need to find a way to propagate the types from API to fetch result. etc...
 
-Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getName` on the browserside, just like you do serverside? That's where `nect-rpc` comes in. With a `nect-rpc` enabled API route, all its exported functions automatically become available to the browser as well.
+Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getName` on the browserside, just like you do serverside? That's where `next-rpc` comes in. With a `next-rpc` enabled API route, all its exported functions automatically become available to the browser as well.
 
 ## Rules and limitations
 
