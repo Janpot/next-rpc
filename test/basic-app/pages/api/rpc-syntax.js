@@ -17,3 +17,6 @@ export const f3 = async function f3() {
 };
 
 export const f4 = async () => 4;
+
+export const f5 = async () => 5,
+  f6 = async () => 6;

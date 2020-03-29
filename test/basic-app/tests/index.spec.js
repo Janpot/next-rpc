@@ -93,7 +93,7 @@ describe('basic-app', () => {
       await page.goto(new URL('/syntax', app.url));
       await page.waitForSelector('#results');
       const browserData = await page.$eval('#results', (el) => el.textContent);
-      expect(browserData).toBe('1 2 3 4');
+      expect(browserData).toBe('1 2 3 4 5 6');
     } finally {
       await Promise.all([app.kill(), page.close()]);
     }
