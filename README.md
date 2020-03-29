@@ -2,37 +2,24 @@
 
 > `next-rpc` makes exported functions from API routes accessible in the browser. Just import your API function and call it anywhere you want.
 
-## Usage
+## Example
 
-Next.js 9.3 introduced [`getServerSideProps` and `getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching). New ways of calling serverside code and transfer the data to the browser. a pattern emerged for sharing API routes serverside and browserside. In short the idea is to abstract the logic into an exported function for serverside code and expose the function to the browser through an API handler.
+Define your API route as follows:
 
 ```js
 // ./pages/api/myApi.js
-export async function getName(code) {
-  return db.query(`SELECT name FROM country WHERE code = ?`, code);
-}
 
-export default async (req, res) => {
-  res.send(await getName(req.query.code));
+export const config = {
+  // enable rpc on this API route
+  rpc: true,
 };
-```
 
-This pattern is great as it avoids hitting the network when used serverside. Unfortunaly, to use it client side it still involves a lot of ceremony. i.e. a http request handler needs to be set up, `fetch` needs to be used in the browser, the input and output needs to be correctly encoded and decoded. Error handling needs to be set up to deal with network related errors. If you use typescript you need to find a way to propagate teh types from API to fetch result. etc...
-
-Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getName` on the browserside, just like you do serverside? That's where `nect-rpc` comes in. With a `nect-rpc` enabled API route, all its exported functions automatically become available to the browser as well. The previous snippet now becomes:
-
-```js
-// ./pages/api/myApi.js
-
-// use the config export to enable rpc on this API route
-export const config = { rpc: true };
-
-// this method can now be called serverside as well as in the browser
+// export a function that needs to be called from the server and the browser
 export async function getName(code) {
   return db.query(`SELECT name FROM country WHERE code = ?`, code);
 }
 
-// no need for a default export, next-rpc will set up a request handler
+// no default export, next-rpc will set it up automatically
 ```
 
 Now in your components you can just import `getName` and call it anywhere you want:
@@ -52,8 +39,10 @@ export function getServerSideProps() {
 
 export default function Index({ initialData }) {
   const [countryName, setCountryName] = React.useState(initialData);
+
   // but also call your API function from a click handler
   const handleClick = async () => setCountryName(await getName('CA'));
+
   return (
     <div>
       <button onClick={handleClick}>countryName</button>
@@ -61,8 +50,6 @@ export default function Index({ initialData }) {
   );
 }
 ```
-
-It's important to note that `next-rpc` intends to be fully backwards compatible. If you don't specify the `rpc` option, the API route will behave as it does by default in next.js.
 
 ## Installation
 
@@ -81,6 +68,25 @@ module.exports = withRpc({
   // your next.js config goes here
 });
 ```
+
+## Why this library is needed
+
+Next.js 9.3 introduced [`getServerSideProps` and `getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching). New ways of calling serverside code and transfer the data to the browser. a pattern emerged for sharing API routes serverside and browserside. In short the idea is to abstract the logic into an exported function for serverside code and expose the function to the browser through an API handler.
+
+```js
+// ./pages/api/myApi.js
+export async function getName(code) {
+  return db.query(`SELECT name FROM country WHERE code = ?`, code);
+}
+
+export default async (req, res) => {
+  res.send(await getName(req.query.code));
+};
+```
+
+This pattern is great as it avoids hitting the network when used serverside. Unfortunaly, to use it client side it still involves a lot of ceremony. i.e. a http request handler needs to be set up, `fetch` needs to be used in the browser, the input and output needs to be correctly encoded and decoded. Error handling needs to be set up to deal with network related errors. If you use typescript you need to find a way to propagate teh types from API to fetch result. etc...
+
+Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getName` on the browserside, just like you do serverside? That's where `nect-rpc` comes in. With a `nect-rpc` enabled API route, all its exported functions automatically become available to the browser as well.
 
 ## Rules and limitations
 
@@ -106,6 +112,8 @@ I'm looking into all the available options for implementing a middleware style s
 ## How it works
 
 `next-rpc` compiles api routes. If it finds `rpc` enabled it will rewrite the module. If the compilation is for a serverside bundle, it will generate an API handler that encapsulates all exported functions. For browserside bundles, it will replace each exported function with a function that uses fetch to call this API handler.
+
+It's important to note that `next-rpc` intends to be fully backwards compatible. If you don't specify the `rpc` option, the API route will behave as it does by default in next.js.
 
 ## Roadmap
 
