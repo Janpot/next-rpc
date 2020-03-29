@@ -84,7 +84,7 @@ module.exports = withRpc({
 
 ## Rules and limitations
 
-1. RPC routes are only allowed to export async functions. They also need to be statically analyzable as such. Therefore only the following is allowed, either:
+1. Rpc routes are **only allowed to export async functions**. They also need to be statically analyzable as such. Therefore only the following is allowed, either:
 
 ```js
 export async function fn1() {}
@@ -92,11 +92,16 @@ export async function fn1() {}
 export const fn2 = async () => {};
 ```
 
-2. All inputs and outputs must be simple JSON serializable values.
-3. a default export is not allowed. `next-rpc` will generate one.
-4. You must enable rpc routes through the `config` export. It must be an exported object that has the `rpc: true` property.
-5. Don't expose sensitive data through rpc routes.
-6. It's currently not possible to use node.js middleware or tap into the network layer that `next-rpc` sets up. However, I'm planning to look into making such a thing possible.
+2. All inputs and outputs must be simple **JSON serializable values**.
+3. a **default export is not allowed**. `next-rpc` will generate one.
+4. **You must enable rpc routes** through the `config` export. It must be an exported object that has the `rpc: true` property.
+
+## When not to use rpc routes (yet)
+
+- **You need to handle sensitive data.** Currently there is no way to authenticate rpc routes yet.
+- **You need to fine grained control over the network layer.** You want to add certain caching logic in the network layer? Or you wnat strict control over how API handlers behave? Maybe you'd like to use existing node.js middleware? You can still use classic next.js API routes.
+
+I'm looking into all the available options for implementing a middleware style solution. I have some ideas, but for now I intend to just keep it simple and get some mileage out of this library first.
 
 ## How it works
 
@@ -104,5 +109,5 @@ export const fn2 = async () => {};
 
 ## Roadmap
 
-[ ] Better dev experience, warn when using unserializable input/output
-[ ] Middleware mechanism, with the primary purpose of enabling authentication
+- **Improve dev experience**, warn when using unserializable input/output
+- **Come up with a Middleware mechanism**, with the primary purpose of enabling authentication
