@@ -11,8 +11,7 @@ Define your API route as follows:
 import db from '../../lib/db';
 
 export const config = {
-  // enable rpc on this API route
-  rpc: true,
+  rpc: true, // enables rpc on this API route
 };
 
 // export a function that needs to be called from the server and the browser
@@ -32,7 +31,7 @@ export const getServerSideProps = async () => ({
   props: { initialData: await getName('US') },
 });
 
-export default function Index({ initialData }) {
+export default function MyPage({ initialData }) {
   const [countryName, setCountryName] = React.useState(initialData);
 
   // but also call your API function in the browser
