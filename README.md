@@ -17,9 +17,9 @@ export default async (req, res) => {
 };
 ```
 
-This pattern is great as it avoids hitting the network when used serverside. Unfortunaly, to use it client side it still involves a lot of ceremony. i.e. a http request handler needs to be set up, fetch needs to be used in the browser, the input and output needs to be correctly encoded and decoded. Error handling needs to be set up to deal with network related errors. etc...
+This pattern is great as it avoids hitting the network when used serverside. Unfortunaly, to use it client side it still involves a lot of ceremony. i.e. a http request handler needs to be set up, `fetch` needs to be used in the browser, the input and output needs to be correctly encoded and decoded. Error handling needs to be set up to deal with network related errors. If you use typescript you need to find a way to propagate teh types from API to fetch result. etc...
 
-Wouldn't it be nice if all of that was automagically handled and all you'd need to do is import `getName` on the browserside, just like you do serverside? That's where `nect-rpc` comes in. With a `nect-rpc` enabled API route, all its exported functions automatically become available to the browser as well. The previous snippet now becomes:
+Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getName` on the browserside, just like you do serverside? That's where `nect-rpc` comes in. With a `nect-rpc` enabled API route, all its exported functions automatically become available to the browser as well. The previous snippet now becomes:
 
 ```js
 // ./pages/api/myApi.js
@@ -62,6 +62,8 @@ export default function Index({ initialData }) {
 }
 ```
 
+It's important to note that `next-rpc` intends to be fully backwards compatible. If you don't specify the `rpc` option, the API route will behave as it does by default in next.js.
+
 ## Installation
 
 Install the `next-rpc` module
@@ -99,3 +101,8 @@ export const fn2 = async () => {};
 ## How it works
 
 `next-rpc` compiles api routes. If it finds `rpc` enabled it will rewrite the module. If the compilation is for a serverside bundle, it will generate an API handler that encapsulates all exported functions. For browserside bundles, it will replace each exported function with a function that uses fetch to call this API handler.
+
+## Roadmap
+
+[ ] Better dev experience, warn when using unserializable input/output
+[ ] Middleware mechanism, with the primary purpose of enabling authentication
