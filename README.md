@@ -7,7 +7,8 @@
 Define your API route as follows:
 
 ```js
-// ./pages/api/myApi.js
+// /pages/api/myApi.js
+import db from '../../lib/db';
 
 export const config = {
   // enable rpc on this API route
@@ -18,36 +19,26 @@ export const config = {
 export async function getName(code) {
   return db.query(`SELECT name FROM country WHERE code = ?`, code);
 }
-
-// no default export, next-rpc will set it up automatically
 ```
 
 Now in your components you can just import `getName` and call it anywhere you want:
 
 ```jsx
-// ./pages/index.js
+// /pages/index.js
 import { getName } from './api/myApi';
 
-export function getServerSideProps() {
-  return {
-    props: {
-      // call your API functions serverside
-      initialData: await getName('US'),
-    },
-  };
-}
+export const getServerSideProps = async () => ({
+  // call your API functions serverside
+  props: { initialData: await getName('US') },
+});
 
 export default function Index({ initialData }) {
   const [countryName, setCountryName] = React.useState(initialData);
 
-  // but also call your API function from a click handler
+  // but also call your API function in the browser
   const handleClick = async () => setCountryName(await getName('CA'));
 
-  return (
-    <div>
-      <button onClick={handleClick}>countryName</button>
-    </div>
-  );
+  return <button onClick={handleClick}>countryName</button>;
 }
 ```
 
@@ -74,7 +65,7 @@ module.exports = withRpc({
 Next.js 9.3 introduced [`getServerSideProps` and `getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching). New ways of calling serverside code and transfer the data to the browser. a pattern emerged for sharing API routes serverside and browserside. In short the idea is to abstract the logic into an exported function for serverside code and expose the function to the browser through an API handler.
 
 ```js
-// ./pages/api/myApi.js
+// /pages/api/myApi.js
 export async function getName(code) {
   return db.query(`SELECT name FROM country WHERE code = ?`, code);
 }
@@ -104,7 +95,7 @@ Wouldn't it be nice if all of that was automatically handled and all you'd need 
 
 ## When not to use rpc routes (yet)
 
-- **You need to handle sensitive data.** Currently there is no way to authenticate rpc routes yet.
+- **You need to handle sensitive data.** Currently there is no way to authenticate rpc routes.
 - **You need to fine grained control over the network layer.** You want to add certain caching logic in the network layer? Or you wnat strict control over how API handlers behave? Maybe you'd like to use existing node.js middleware? You can still use classic next.js API routes.
 
 I'm looking into all the available options for implementing a middleware style solution. I have some ideas, but for now I intend to just keep it simple and get some mileage out of this library first.
