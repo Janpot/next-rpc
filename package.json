@@ -24,7 +24,7 @@
   },
   "scripts": {
     "test": "jest --testRunner='jest-circus/runner'",
-    "fix": "$npm_execpath prettier --write",
+    "fix": "$npm_execpath run prettier -- --write",
     "prettier": "prettier --check \"**/*.{js,ts,jsx,tsx,json,yml,md}\"",
     "next": "next"
   },

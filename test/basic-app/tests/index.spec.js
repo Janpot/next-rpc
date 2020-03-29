@@ -51,28 +51,30 @@ async function startNext(path) {
   };
 }
 
+afterAll(async () => {
+  await fs.rmdir(path.resolve(FIXTURE_PATH, './.next'), { recursive: true });
+});
+
 describe('basic-app', () => {
   /**
    * @type {import('puppeteer').Browser}
    */
   let browser;
+  let app;
 
   beforeAll(async () => {
     await Promise.all([
       buildNext(FIXTURE_PATH),
       puppeteer.launch().then((b) => (browser = b)),
     ]);
+    app = await startNext(FIXTURE_PATH);
   }, 30000);
 
   afterAll(async () => {
-    await Promise.all([
-      browser && browser.close(),
-      fs.rmdir(path.resolve(FIXTURE_PATH, './.next'), { recursive: true }),
-    ]);
+    await Promise.all([browser && browser.close(), app && app.kill()]);
   });
 
   test('should call the rpc method everywhere', async () => {
-    const app = await startNext(FIXTURE_PATH);
     const page = await browser.newPage();
     try {
       await page.goto(new URL('/', app.url));
@@ -82,12 +84,11 @@ describe('basic-app', () => {
       const browserData = await page.$eval('#browser', (el) => el.textContent);
       expect(browserData).toBe('baz quux');
     } finally {
-      await Promise.all([app.kill(), page.close()]);
+      await page.close();
     }
   });
 
   test('should reject on errors', async () => {
-    const app = await startNext(FIXTURE_PATH);
     const page = await browser.newPage();
     try {
       await page.goto(new URL('/throws', app.url));
@@ -95,12 +96,11 @@ describe('basic-app', () => {
       const error = await page.$eval('#error', (el) => el.textContent);
       expect(error).toBe('the message : THE_CODE');
     } finally {
-      await Promise.all([app.kill(), page.close()]);
+      await page.close();
     }
   });
 
   test('should pass all allowed syntaxes', async () => {
-    const app = await startNext(FIXTURE_PATH);
     const page = await browser.newPage();
     try {
       await page.goto(new URL('/syntax', app.url));
@@ -108,10 +108,12 @@ describe('basic-app', () => {
       const browserData = await page.$eval('#results', (el) => el.textContent);
       expect(browserData).toBe('1 2 3 4 5 6');
     } finally {
-      await Promise.all([app.kill(), page.close()]);
+      await page.close();
     }
   });
+});
 
+describe('build', () => {
   test('should fail on non function export', async () => {
     await withEnabledTest(
       path.resolve(FIXTURE_PATH, './pages/api/disallowed-syntax.js'),
@@ -124,7 +126,7 @@ describe('basic-app', () => {
         );
       }
     );
-  }, 10000);
+  }, 30000);
 
   test('should fail on non-async function export', async () => {
     await withEnabledTest(
@@ -138,7 +140,7 @@ describe('basic-app', () => {
         );
       }
     );
-  }, 10000);
+  }, 30000);
 
   test('should fail on non-async arrow function export', async () => {
     await withEnabledTest(
@@ -152,7 +154,7 @@ describe('basic-app', () => {
         );
       }
     );
-  }, 10000);
+  }, 30000);
 
   test('should fail on non-async function expression export', async () => {
     await withEnabledTest(
@@ -166,7 +168,7 @@ describe('basic-app', () => {
         );
       }
     );
-  }, 10000);
+  }, 30000);
 
   test('should fail on non-static function export', async () => {
     await withEnabledTest(
@@ -180,5 +182,5 @@ describe('basic-app', () => {
         );
       }
     );
-  }, 10000);
+  }, 30000);
 });
