@@ -86,11 +86,11 @@ module.exports = withRpc({
 
 1. Rpc routes are **only allowed to export async functions**. They also need to be statically analyzable as such. Therefore only the following is allowed, either:
 
-```js
-export async function fn1() {}
+   ```js
+   export async function fn1() {}
 
-export const fn2 = async () => {};
-```
+   export const fn2 = async () => {};
+   ```
 
 2. All inputs and outputs must be simple **JSON serializable values**.
 3. a **default export is not allowed**. `next-rpc` will generate one.
