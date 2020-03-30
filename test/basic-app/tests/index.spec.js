@@ -94,7 +94,8 @@ describe('basic-app', () => {
       await page.goto(new URL('/throws', app.url));
       await page.waitForSelector('#error');
       const error = await page.$eval('#error', (el) => el.textContent);
-      expect(error).toBe('the message : THE_CODE');
+      // avoid leaking error internals, don't forward the code
+      expect(error).toBe('the message : NO_CODE');
     } finally {
       await page.close();
     }

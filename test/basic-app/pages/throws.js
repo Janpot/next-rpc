@@ -7,7 +7,7 @@ export default function Index(props) {
   }, []);
   return error ? (
     <div id="error">
-      {error.message} : {error.code}
+      {error.message} : {error.code || 'NO_CODE'}
     </div>
   ) : null;
 }
