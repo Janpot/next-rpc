@@ -53,7 +53,7 @@ configure next.js to use the module
 
 ```tsx
 // ./next.config.js
-const withRpc = require('next-rpc');
+const withRpc = require('next-rpc')();
 module.exports = withRpc({
   // your next.js config goes here
 });
@@ -109,10 +109,10 @@ It's important to note that `next-rpc` intends to be fully backwards compatible.
 
 - **Improve dev experience**, warn when using unserializable input/output
 - **Come up with a Middleware mechanism**, with the primary purpose of enabling authentication. Maybe allowing a default export of the form:
-    ```js
-    export default async function ({ req, res, method, params }) {
-      return {
-        result: await method(...params)
-      }
-    }
-    ```
+  ```js
+  export default async function ({ req, res, method, params }) {
+    return {
+      result: await method(...params),
+    };
+  }
+  ```

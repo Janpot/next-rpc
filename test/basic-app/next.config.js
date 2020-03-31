@@ -1,2 +1,2 @@
-const withRpc = require('../../lib');
+const withRpc = require('../../lib')();
 module.exports = withRpc();
