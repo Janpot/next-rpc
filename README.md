@@ -101,11 +101,18 @@ I'm looking into all the available options for implementing a middleware style s
 
 ## How it works
 
-`next-rpc` compiles api routes. If it finds `rpc` enabled it will rewrite the module. If the compilation is for a serverside bundle, it will generate an API handler that encapsulates all exported functions. For browserside bundles, it will replace each exported function with a function that uses fetch to call this API handler.
+`next-rpc` compiles api routes. If it finds `rpc` enabled it will rewrite the module. In serverside bundles, it will generate an API handler that encapsulates all exported functions. For browserside bundles, it will replace each exported function with a function that uses `fetch` to call this API handler.
 
 It's important to note that `next-rpc` intends to be fully backwards compatible. If you don't specify the `rpc` option, the API route will behave as it does by default in next.js.
 
 ## Roadmap
 
 - **Improve dev experience**, warn when using unserializable input/output
-- **Come up with a Middleware mechanism**, with the primary purpose of enabling authentication
+- **Come up with a Middleware mechanism**, with the primary purpose of enabling authentication. Maybe allowing a default export of the form:
+    ```js
+    export default async function ({ req, res, method, params }) {
+      return {
+        result: await method(...params)
+      }
+    }
+    ```
