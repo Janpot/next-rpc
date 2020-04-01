@@ -1,12 +1,16 @@
-const execa = require('execa');
 const path = require('path');
 const puppeteer = require('puppeteer');
-const { Writable } = require('stream');
 const { promises: fs } = require('fs');
-const { buildNext, startNext, cleanup } = require('../../utils');
+const { buildNext, startNext, cleanup } = require('./utils');
 
-const FIXTURE_PATH = path.resolve(__dirname, '../');
+const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/basic-app');
 
+/**
+ * @param {string} filepath
+ * @param {string} test
+ * @param {() => Promise<void>} assertions
+ * @returns {Promise<void>}
+ */
 async function withEnabledTest(filepath, test, assertions) {
   const content = await fs.readFile(filepath, { encoding: 'utf-8' });
   const newContent = content.replace(`/* TEST "${test}"`, '');
@@ -25,6 +29,9 @@ describe('basic-app', () => {
    * @type {import('puppeteer').Browser}
    */
   let browser;
+  /**
+   * @type {import('./utils').RunningNextApp}
+   */
   let app;
 
   beforeAll(async () => {
@@ -42,7 +49,7 @@ describe('basic-app', () => {
   test('should call the rpc method everywhere', async () => {
     const page = await browser.newPage();
     try {
-      await page.goto(new URL('/', app.url));
+      await page.goto(new URL('/', app.url).toString());
       const ssrData = await page.$eval('#ssr', (el) => el.textContent);
       expect(ssrData).toBe('foo bar');
       await page.waitForSelector('#browser');
@@ -56,7 +63,7 @@ describe('basic-app', () => {
   test('should reject on errors', async () => {
     const page = await browser.newPage();
     try {
-      await page.goto(new URL('/throws', app.url));
+      await page.goto(new URL('/throws', app.url).toString());
       await page.waitForSelector('#error');
       const error = await page.$eval('#error', (el) => el.textContent);
       // avoid leaking error internals, don't forward the code
@@ -69,7 +76,7 @@ describe('basic-app', () => {
   test('should pass all allowed syntaxes', async () => {
     const page = await browser.newPage();
     try {
-      await page.goto(new URL('/syntax', app.url));
+      await page.goto(new URL('/syntax', app.url).toString());
       await page.waitForSelector('#results');
       const browserData = await page.$eval('#results', (el) => el.textContent);
       expect(browserData).toBe('1 2 3 4 5 6');

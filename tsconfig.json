@@ -11,6 +11,6 @@
     "noEmit": true,
     "noUnusedLocals": true
   },
-  "exclude": ["node_modules"],
-  "include": ["lib/**/*"]
+  "exclude": ["node_modules", "test/__fixtures__"],
+  "include": ["lib/**/*", "test/**/*"]
 }

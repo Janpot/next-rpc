@@ -1,8 +1,12 @@
 const execa = require('execa');
 const { promises: fs } = require('fs');
-const { Writable } = require('stream');
+const { Writable, Readable } = require('stream');
 const path = require('path');
 
+/**
+ * @param {Readable} stdout
+ * @returns Promise<void>
+ */
 async function appReady(stdout) {
   return new Promise((resolve) => {
     stdout.pipe(
@@ -18,25 +22,41 @@ async function appReady(stdout) {
   });
 }
 
+/**
+ * @param {string} appPath
+ * @returns Promise<void>
+ */
 async function buildNext(appPath) {
-  return execa('next', ['build'], {
+  await execa('next', ['build'], {
     preferLocal: true,
     cwd: appPath,
   });
 }
 
+/**
+ * @typedef {{ url: string, kill: (...args: any[]) => boolean }} RunningNextApp
+ */
+
+/**
+ * @param {string} appPath
+ * @returns Promise<RunningNextApp>
+ */
 async function startNext(appPath) {
   const app = execa('next', ['start'], {
     preferLocal: true,
     cwd: appPath,
   });
-  await appReady(app.stdout);
+  await appReady(/** @type {Readable} */ (app.stdout));
   return {
     url: 'http://localhost:3000/',
-    kill: (...args) => app.kill(...args),
+    kill: app.kill.bind(app),
   };
 }
 
+/**
+ * @param {string} appPath
+ * @returns Promise<void>
+ */
 async function cleanup(appPath) {
   await fs.rmdir(path.resolve(appPath, './.next'), { recursive: true });
 }
