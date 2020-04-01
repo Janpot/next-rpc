@@ -3,6 +3,7 @@ const path = require('path');
 const puppeteer = require('puppeteer');
 const { Writable } = require('stream');
 const { promises: fs } = require('fs');
+const { buildNext, startNext, cleanup } = require('../../utils');
 
 const FIXTURE_PATH = path.resolve(__dirname, '../');
 
@@ -17,43 +18,7 @@ async function withEnabledTest(filepath, test, assertions) {
   }
 }
 
-async function appReady(stdout) {
-  return new Promise((resolve) => {
-    stdout.pipe(
-      new Writable({
-        write(chunk, encoding, callback) {
-          if (/ready on/i.test(String(chunk))) {
-            resolve();
-          }
-          callback();
-        },
-      })
-    );
-  });
-}
-
-async function buildNext(path) {
-  return execa('next', ['build'], {
-    preferLocal: true,
-    cwd: path,
-  });
-}
-
-async function startNext(path) {
-  const app = execa('next', ['start'], {
-    preferLocal: true,
-    cwd: path,
-  });
-  await appReady(app.stdout);
-  return {
-    url: 'http://localhost:3000/',
-    kill: (...args) => app.kill(...args),
-  };
-}
-
-afterAll(async () => {
-  await fs.rmdir(path.resolve(FIXTURE_PATH, './.next'), { recursive: true });
-});
+afterAll(() => cleanup(FIXTURE_PATH));
 
 describe('basic-app', () => {
   /**

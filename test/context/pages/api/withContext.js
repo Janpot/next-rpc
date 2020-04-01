@@ -4,7 +4,7 @@ export const config = {
   rpc: true,
 };
 
-export async function getUrl() {
-  const { req } = getContext();
-  return req.url;
+export async function hasContext() {
+  const { req, res } = getContext();
+  return !!(req && res);
 }
