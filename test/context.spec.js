@@ -29,12 +29,21 @@ describe('basic-app', () => {
     await Promise.all([browser && browser.close(), app && app.kill()]);
   });
 
-  test('should call provide context when called through getServerSidProps', async () => {
+  test('should provide context when called through getServerSidProps', async () => {
     const page = await browser.newPage();
     try {
       await page.goto(new URL('/getServerSideProps', app.url).toString());
-      const ssrData = await page.$eval('#result', (el) => el.textContent);
-      expect(ssrData).toBe('success');
+      expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should provide context when called through getIitialProps', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/getInitialProps', app.url).toString());
+      expect(await page.$('#has-context')).not.toBeNull();
     } finally {
       await page.close();
     }
