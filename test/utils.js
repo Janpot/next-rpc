@@ -2,6 +2,7 @@ const execa = require('execa');
 const { promises: fs } = require('fs');
 const { Writable, Readable } = require('stream');
 const path = require('path');
+const getPort = require('get-port');
 
 /**
  * @param {Readable} stdout
@@ -39,16 +40,18 @@ async function buildNext(appPath) {
 
 /**
  * @param {string} appPath
+ * @param {number=} port
  * @returns Promise<RunningNextApp>
  */
-async function startNext(appPath) {
-  const app = execa('next', ['start'], {
+async function startNext(appPath, port) {
+  port = port || (await getPort());
+  const app = execa('next', ['start', '-p', String(port)], {
     preferLocal: true,
     cwd: appPath,
   });
   await appReady(/** @type {Readable} */ (app.stdout));
   return {
-    url: 'http://localhost:3000/',
+    url: `http://localhost:${port}/`,
     kill: app.kill.bind(app),
   };
 }

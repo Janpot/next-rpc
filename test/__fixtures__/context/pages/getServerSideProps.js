@@ -1,13 +1,13 @@
 import { hasContext } from './api/withContext';
 
-export async function getServerSideProps() {
+export async function getServerSideProps(ctx) {
   return {
     props: {
-      hasContext: await hasContext(),
+      hasContext: await hasContext(ctx),
     },
   };
 }
 
 export default function Page({ hasContext }) {
-  return hasContext ? 'success' : null;
+  return hasContext ? <div id="result">success</div> : null;
 }
