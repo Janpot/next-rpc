@@ -83,8 +83,38 @@ describe('basic-app', () => {
     const page = await browser.newPage();
     try {
       await page.goto(new URL('/callRpc', app.url).toString());
-      await page.waitForSelector('#has-context')
+      await page.waitForSelector('#has-context');
       expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should be able to set cookies', async () => {
+    const page = await browser.newPage();
+    try {
+      const initialPageCookies = await page.cookies();
+      expect(initialPageCookies).not.toContainEqual(
+        expect.objectContaining({ name: 'cookieName' })
+      );
+
+      await page.goto(new URL('/cookies', app.url).toString());
+      await page.waitForSelector('#final-value');
+      const initialValue = await page.$eval(
+        '#initial-value',
+        (e) => e.textContent
+      );
+      const finalValue = await page.$eval('#final-value', (e) => e.textContent);
+      expect(initialValue).toBe('');
+      expect(finalValue).toBe('some cookie value');
+
+      const finalPageCookies = await page.cookies();
+      expect(finalPageCookies).toContainEqual(
+        expect.objectContaining({
+          name: 'cookieName',
+          value: 'some cookie value',
+        })
+      );
     } finally {
       await page.close();
     }
