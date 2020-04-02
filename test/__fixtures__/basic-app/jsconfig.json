@@ -3,7 +3,7 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "next-rpc/*": ["../../../lib/*"]
+      "next-rpc/*": ["../../../*"]
     }
   }
 }

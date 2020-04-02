@@ -7,7 +7,9 @@
   "author": "Jan Potoms",
   "license": "MIT",
   "files": [
-    "lib/*"
+    "lib/*",
+    "context.js",
+    "context.d.ts"
   ],
   "devDependencies": {
     "@types/babel__core": "^7.1.6",

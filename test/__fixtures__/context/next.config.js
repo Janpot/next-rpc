@@ -1,4 +1,4 @@
-const withRpc = require('../../../lib')({
+const withRpc = require('../../..')({
   experimentalContext: true,
 });
 module.exports = withRpc({
