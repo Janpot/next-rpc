@@ -7,12 +7,8 @@
 Define your rpc route as follows:
 
 ```js
-// /pages/api/myApi.js
-import db from '../../lib/db';
-
-export const config = {
-  rpc: true, // enables rpc on this API route
-};
+// /pages/api/countries.js
+export const config = { rpc: true }; // enable rpc on this API route
 
 // export a function that needs to be called from the server and the browser
 export async function getName(code) {
@@ -24,20 +20,16 @@ Now in your components you can just import `getName` and call it anywhere you wa
 
 ```jsx
 // /pages/index.js
-import { getName } from './api/myApi';
-
-export const getServerSideProps = async () => ({
-  // call your API functions serverside
-  props: { initialData: await getName('US') },
-});
+import { getName } from './api/countries';
 
 export default function MyPage({ initialData }) {
   const [countryName, setCountryName] = React.useState(initialData);
 
-  // but also call your API function in the browser
-  const handleClick = async () => setCountryName(await getName('CA'));
-
-  return <button onClick={handleClick}>countryName</button>;
+  return (
+    <button onClick={() => getName('BE').then(setCountryName)}>
+      {countryName || 'click me'}
+    </button>
+  );
 }
 ```
 
