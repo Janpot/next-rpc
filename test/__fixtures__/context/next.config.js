@@ -1,4 +1,6 @@
 const withRpc = require('../../../lib')({
   experimentalContext: true,
 });
-module.exports = withRpc();
+module.exports = withRpc({
+  experimental: { jsconfigPaths: true },
+});
