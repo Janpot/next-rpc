@@ -2,6 +2,7 @@ const path = require('path');
 const puppeteer = require('puppeteer');
 const { promises: fs } = require('fs');
 const { buildNext, startNext, cleanup } = require('./utils');
+const { default: fetch } = require('node-fetch');
 
 const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/basic-app');
 
@@ -83,6 +84,25 @@ describe('basic-app', () => {
     } finally {
       await page.close();
     }
+  });
+
+  test("shouldn't leak prototype methods", async () => {
+    const response = await fetch(
+      new URL('/api/rpc-route', app.url).toString(),
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ method: 'toString', params: [] }),
+      }
+    );
+    expect(response).toHaveProperty('ok', true);
+    const responseBody = await response.json();
+    expect(responseBody).toHaveProperty(
+      ['error', 'message'],
+      expect.stringMatching('"toString" is not a function')
+    );
   });
 });
 
