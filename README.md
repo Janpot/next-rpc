@@ -84,12 +84,38 @@ Wouldn't it be nice if all of that was automatically handled and all you'd need 
 3. a **default export is not allowed**. `next-rpc` will generate one.
 4. **You must enable rpc routes** through the `config` export. It must be an exported object that has the `rpc: true` property.
 
-## When not to use rpc routes (yet)
+## next request context
 
-- **You need to handle sensitive data.** Currently there is no way to authenticate rpc routes.
-- **You need to fine grained control over the network layer.** You want to add certain caching logic in the network layer? Or you wnat strict control over how API handlers behave? Maybe you'd like to use existing node.js middleware? You can still use classic next.js API routes.
+> **warning:** This feature makes use of [experimental node.js APIs](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage). Running v13.10 is required to use the following feature. Don't use this in a production environment.
 
-I'm looking into all the available options for implementing a middleware style solution. I have some ideas, but for now I intend to just keep it simple and get some mileage out of this library first.
+This library completely hides the network layer. This is makes it elegant to use, but also imposes limitations. To efficiently be able implement things like cookie authentication, access to the underlying requests is required. To enable that, this library introduce `next-rpc/context`. An example:
+
+```js
+// ./pages/api/myRpc.js
+import { useContext } from 'next-rpc/context';
+
+const config = { rpc: true };
+
+export async function currentUser() {
+  const { req } = useContext();
+  return getUserFromRequest(req);
+}
+```
+
+The `req` variable in the previous example will contain the `IncomingMessage` that lead to the call of `currentUser()`. That means it will receive `req` from either:
+
+- `NextPageContext`: if it traces back to `getServerSideProps` or `getInitialProps`.
+- `NextApiHandler`: if it traces back to a call in another API handler, or if it was called from the browser.
+
+`next-rpc` intercepts all instances of `getInitialProps`, `getServerSideProps` and api handlers and injects its context provider in there. From there on, every function invocation that descends from that point will be able to access the context through `useContext`. Since this feature relies on experimental APIs, that still have questionable performance characteristics, it needs to be explicitly enabled by configuring the `experimentalContext` flag in `next.config.js`:
+
+```js
+// ./next.config.js
+const withRpc = require('next-rpc')({
+  experimentalContext: true,
+});
+module.exports = withRpc();
+```
 
 ## How it works
 
@@ -99,12 +125,5 @@ It's important to note that `next-rpc` intends to be fully backwards compatible.
 
 ## Roadmap
 
-- **Improve dev experience**, warn when using unserializable input/output
-- **Come up with a Middleware mechanism**, with the primary purpose of enabling authentication. Maybe allowing a default export of the form:
-  ```js
-  export default async function ({ req, res, method, params }) {
-    return {
-      result: await method(...params),
-    };
-  }
-  ```
+- **Improve dev experience:** warn when using unserializable input/output
+- **Custom contexts:** it should be possible to build on the context feature to provide a custom context. e.g. `UserContext`.
