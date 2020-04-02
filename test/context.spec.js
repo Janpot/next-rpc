@@ -39,10 +39,30 @@ describe('basic-app', () => {
     }
   });
 
-  test('should provide context when called through getIitialProps', async () => {
+  test('should provide context through getIitialProps after page', async () => {
     const page = await browser.newPage();
     try {
-      await page.goto(new URL('/getInitialProps', app.url).toString());
+      await page.goto(new URL('/getInitialProps1', app.url).toString());
+      expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should provide context through getIitialProps before page', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/getInitialProps2', app.url).toString());
+      expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should provide context through getIitialProps as static class property', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/getInitialProps3', app.url).toString());
       expect(await page.$('#has-context')).not.toBeNull();
     } finally {
       await page.close();
