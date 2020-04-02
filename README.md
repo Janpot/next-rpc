@@ -41,7 +41,7 @@ Install the `next-rpc` module
 npm install -S next-rpc
 ```
 
-configure next.js to use the module
+configure Next.js to use the module
 
 ```tsx
 // ./next.config.js
@@ -121,7 +121,7 @@ module.exports = withRpc();
 
 `next-rpc` compiles api routes. If it finds `rpc` enabled it will rewrite the module. In serverside bundles, it will generate an API handler that encapsulates all exported functions. For browserside bundles, it will replace each exported function with a function that uses `fetch` to call this API handler.
 
-It's important to note that `next-rpc` intends to be fully backwards compatible. If you don't specify the `rpc` option, the API route will behave as it does by default in next.js.
+It's important to note that `next-rpc` intends to be fully backwards compatible. If you don't specify the `rpc` option, the API route will behave as it does by default in Next.js.
 
 ## Roadmap
 

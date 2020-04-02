@@ -7,7 +7,7 @@
   "author": "Jan Potoms",
   "license": "MIT",
   "files": [
-    "src/*"
+    "lib/*"
   ],
   "devDependencies": {
     "@types/babel__core": "^7.1.6",
