@@ -6,6 +6,7 @@
   "repository": "https://github.com/Janpot/next-rpc",
   "author": "Jan Potoms",
   "license": "MIT",
+  "files": ["src/*"],
   "devDependencies": {
     "@types/babel__core": "^7.1.6",
     "@types/execa": "^2.0.0",
