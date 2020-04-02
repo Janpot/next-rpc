@@ -6,7 +6,11 @@ export const config = {
 
 export async function hasContext(expected) {
   const got = getContext();
-  return got && expected.req === got.req && expected.res === got.res;
+  if (expected) {
+    return got && expected.req === got.req && expected.res === got.res;
+  } else {
+    return !!(got && got.req && got.res)
+  }
 }
 
 export async function getUrl() {

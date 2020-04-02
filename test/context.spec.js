@@ -78,4 +78,15 @@ describe('basic-app', () => {
     expect(result).toHaveProperty('apiHasContext', true);
     expect(result).toHaveProperty('rpcHasContext', true);
   });
+
+  test('should have context in rpc routes', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/callRpc', app.url).toString());
+      await page.waitForSelector('#has-context')
+      expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
 });
