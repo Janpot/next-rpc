@@ -97,11 +97,29 @@ describe('basic-app', () => {
         body: JSON.stringify({ method: 'toString', params: [] }),
       }
     );
-    expect(response).toHaveProperty('ok', true);
+    expect(response).toHaveProperty('status', 400);
     const responseBody = await response.json();
     expect(responseBody).toHaveProperty(
       ['error', 'message'],
       expect.stringMatching('"toString" is not a function')
+    );
+  });
+
+  test("shouldn't accept non-POST requests", async () => {
+    const response = await fetch(
+      new URL('/api/rpc-route', app.url).toString(),
+      {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+        },
+      }
+    );
+    expect(response).toHaveProperty('status', 405);
+    const responseBody = await response.json();
+    expect(responseBody).toHaveProperty(
+      ['error', 'message'],
+      expect.stringMatching('method "GET" is not allowed')
     );
   });
 });
