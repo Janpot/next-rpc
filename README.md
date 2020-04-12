@@ -111,20 +111,11 @@ import MoviesList from '../components/MoviesList';
 
 const callFn = (method, ...params) => method(...params);
 
-export function getServerSideProps({ query: { genre } }) {
-  return {
-    props: {
-      genre,
-      initialData: await getMovies(genre),
-    },
-  };
-}
-
-export default function Movies({ genre, initialData }) {
-  const { data, error } = useSwr([getMovies, genre], callFn, { initialData });
+export default function Comedies() {
+  const { data, error } = useSwr([getMovies, 'comedy'], callFn);
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
-  return <MoviesList genre={genre} items={data} />;
+  return <MoviesList items={data} />;
 }
 ```
 
