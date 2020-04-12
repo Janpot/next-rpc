@@ -30,7 +30,7 @@ export default function Home(props: Props) {
 
   return (
     <div>
-      It's now {new Date(info.now).toLocaleTimeString()} on host {info.hostname}
+      It's now {new Date(info.now).toTimeString()} on host {info.hostname}
     </div>
   );
 }
