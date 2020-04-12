@@ -84,6 +84,46 @@ Wouldn't it be nice if all of that was automatically handled and all you'd need 
 3. a **default export is not allowed**. `next-rpc` will generate one.
 4. **You must enable rpc routes** through the `config` export. It must be an exported object that has the `rpc: true` property.
 
+## typescript
+
+`next-rpc` works really nicely with typescript. There is no serialization layer so functions just retain their type sigantures both on server and client.
+
+## swr
+
+`next-rps` can work seamlessly with [`swr`](https://github.com/zeit/swr).
+
+```ts
+// ./pages/api/projects.js
+export const config = { rpc: true };
+
+export async function getMovies(genre) {
+  return db.query(`...`);
+}
+
+// ./pages/index.jsx
+import useSwr from 'swr';
+import { getMovies } from './api/movies';
+import MoviesList from '../components/MoviesList';
+
+const callFn = (method, ...params) => method(...params);
+
+export function getServerSideProps({ query: { genre } }) {
+  return {
+    props: {
+      genre,
+      initialData: await getMovies(genre),
+    },
+  };
+}
+
+export default function Movies({ genre, initialData }) {
+  const { data, error } = useSwr([getMovies, genre], callFn, { initialData });
+  if (error) return <div>failed to load</div>;
+  if (!data) return <div>loading...</div>;
+  return <MoviesList genre={genre} items={data} />;
+}
+```
+
 ## next request context
 
 > **warning:** This feature makes use of [experimental node.js APIs](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage). Running v13.10 is required to use the following feature. Don't use this in a production environment.
