@@ -31,5 +31,5 @@ export async function getGenres() {
 
 export async function getMovies(genre) {
   await delay(LATENCY);
-  return movies[genre] || flat(Object.values(movies));
+  return genre ? movies[genre] : flat(Object.values(movies));
 }
