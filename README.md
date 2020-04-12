@@ -86,9 +86,13 @@ Wouldn't it be nice if all of that was automatically handled and all you'd need 
 
 ## typescript
 
+> Try [the example](https://github.com/Janpot/next-rpc/tree/master/examples/with-typescript) on [codesandbox](https://codesandbox.io/s/github/Janpot/next-rpc/tree/master/examples/with-typescript)
+
 `next-rpc` works really nicely with typescript. There is no serialization layer so functions just retain their type sigantures both on server and client.
 
 ## swr
+
+> Try [the example](https://github.com/Janpot/next-rpc/tree/master/examples/with-swr) on [codesandbox](https://codesandbox.io/s/github/Janpot/next-rpc/tree/master/examples/with-swr)
 
 `next-rps` can work seamlessly with [`swr`](https://github.com/zeit/swr).
 
