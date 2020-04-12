@@ -4,6 +4,8 @@ const LATENCY = 500;
 
 const delay = async (ms) => new Promise((r) => setTimeout(r, ms));
 
+const flat = (arrays) => [].concat(...arrays);
+
 const movies = {
   action: [
     { title: 'Die Hard', year: 1988 },
@@ -29,5 +31,5 @@ export async function getGenres() {
 
 export async function getMovies(genre) {
   await delay(LATENCY);
-  return movies[genre] || Object.values(movies).flat();
+  return movies[genre] || flat(Object.values(movies));
 }
