@@ -11,7 +11,7 @@
     "next": "latest",
     "next-rpc": "latest",
     "react": "latest",
-    "react-dom": "1latest",
+    "react-dom": "latest",
     "swr": "latest"
   }
 }
