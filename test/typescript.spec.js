@@ -1,8 +1,5 @@
 const path = require('path');
-const puppeteer = require('puppeteer');
-const { promises: fs } = require('fs');
-const { buildNext, startNext, cleanup } = require('./utils');
-const { default: fetch } = require('node-fetch');
+const { buildNext, cleanup } = require('./utils');
 
 const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/typescript');
 
