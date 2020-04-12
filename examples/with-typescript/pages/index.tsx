@@ -1,26 +1,36 @@
 import * as React from 'react';
 import { GetServerSideProps } from 'next';
-import { getNow } from './api/host';
+import { getNow, getHostname } from './api/host';
 
 interface Props {
   now: number;
+  hostname: string;
+}
+
+async function getInfo() {
+  const [now, hostname] = await Promise.all([getNow(), getHostname()]);
+  return { now, hostname };
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
   return {
-    props: {
-      now: await getNow(),
-    },
+    // We can call the functions server-side
+    props: await getInfo(),
   };
 };
 
 export default function Home(props: Props) {
-  const [now, setNow] = React.useState(props.now);
+  const [info, setInfo] = React.useState(props);
 
   React.useEffect(() => {
-    const interval = setInterval(() => getNow().then(setNow), 5000);
+    // And we can call the functions client-side
+    const interval = setInterval(() => getInfo().then(setInfo), 5000);
     return () => clearInterval(interval);
   }, []);
 
-  return <div>It's now {new Date(now).toLocaleTimeString()}</div>;
+  return (
+    <div>
+      It's now {new Date(info.now).toLocaleTimeString()} on host {info.hostname}
+    </div>
+  );
 }
