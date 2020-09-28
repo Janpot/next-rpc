@@ -13,7 +13,7 @@ async function appReady(stdout) {
     stdout.pipe(
       new Writable({
         write(chunk, encoding, callback) {
-          if (/ready on/i.test(String(chunk))) {
+          if (/ready - started server on/i.test(String(chunk))) {
             resolve();
           }
           callback();
