@@ -16,7 +16,7 @@ export function notAsync() {
 export const notAsyncArrow = () => 1;
 /**/
 
-
+/* TEST "exporting a non-async function expression"
 export const notAsyncFunctionExpr = function () {
   return 1;
 }
