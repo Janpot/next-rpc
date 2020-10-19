@@ -1,11 +1,11 @@
-import { useContext } from 'next-rpc/context';
+import { getContext } from 'next-rpc/context';
 
 export const config = {
   rpc: true,
 };
 
 export async function hasContext(expected) {
-  const got = useContext();
+  const got = getContext();
   if (expected) {
     return got && expected.req === got.req && expected.res === got.res;
   } else {
@@ -14,17 +14,17 @@ export async function hasContext(expected) {
 }
 
 export async function getUrl() {
-  const { req } = useContext();
+  const { req } = getContext();
   return req.url;
 }
 
 export async function setSomeCookie(name, value) {
-  const { req, res } = useContext();
+  const { req, res } = getContext();
   res.setHeader('set-cookie', `${name}=${value}; path=/`);
 }
 
 export async function getSomeCookie(name) {
-  const { req } = useContext();
+  const { req } = getContext();
   const cookieHeader = req.headers.cookie || '';
   const cookies = new Map(
     cookieHeader.split(';').map((c) => c.trim().split('='))

@@ -127,12 +127,12 @@ This library completely hides the network layer. This is makes it elegant to use
 
 ```js
 // ./pages/api/myRpc.js
-import { useContext } from 'next-rpc/context';
+import { getContext } from 'next-rpc/context';
 
 const config = { rpc: true };
 
 export async function currentUser() {
-  const { req } = useContext();
+  const { req } = getContext();
   return getUserFromRequest(req);
 }
 ```
@@ -142,7 +142,7 @@ The `req` variable in the previous example will contain the `IncomingMessage` th
 - `NextPageContext`: if it traces back to `getServerSideProps` or `getInitialProps`.
 - `NextApiHandler`: if it traces back to a call in another API handler, or if it was called from the browser.
 
-`next-rpc` intercepts all instances of `getInitialProps`, `getServerSideProps` and api handlers and injects its context provider in there. From there on, every function invocation that descends from that point will be able to access the context through `useContext`. Since this feature relies on experimental APIs, that still have questionable performance characteristics, it needs to be explicitly enabled by configuring the `experimentalContext` flag in `next.config.js`:
+`next-rpc` intercepts all instances of `getInitialProps`, `getServerSideProps` and api handlers and injects its context provider in there. From there on, every function invocation that descends from that point will be able to access the context through `getContext`. Since this feature relies on experimental APIs, that still have questionable performance characteristics, it needs to be explicitly enabled by configuring the `experimentalContext` flag in `next.config.js`:
 
 ```js
 // ./next.config.js

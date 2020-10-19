@@ -1,8 +1,8 @@
 import { hasContext } from './withContext';
-import { useContext } from 'next-rpc/context';
+import { getContext } from 'next-rpc/context';
 
 export default async function (req, res) {
-  const ctx = useContext();
+  const ctx = getContext();
   res.json({
     apiHasContext: ctx.req === req && ctx.res === res,
     rpcHasContext: await hasContext({ req, res }),

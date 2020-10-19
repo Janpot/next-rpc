@@ -5,4 +5,4 @@ interface NextRpcContext {
   res?: ServerResponse;
 }
 
-export function useContext(): NextRpcContext;
+export function getContext(): NextRpcContext;
