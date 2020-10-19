@@ -38,7 +38,7 @@
     "prettier": "prettier --check \"**/*.{js,ts,jsx,tsx,json,yml,md}\"",
     "typescript": "tsc",
     "lint": "$npm_execpath run prettier && $npm_execpath run typescript",
-    "jest": "jest --testRunner='jest-circus/runner'",
+    "jest": "jest --testRunner='jest-circus/runner' --runInBand",
     "test": "$npm_execpath run lint && $npm_execpath run jest --runInBand",
     "fix": "$npm_execpath run prettier -- --write",
     "next": "next",
