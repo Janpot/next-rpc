@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { hasContext } from './api/withContext';
 import { Component } from 'react';
 

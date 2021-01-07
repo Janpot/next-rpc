@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { throws } from './api/rpc-route';
 
 export default function Index(props) {

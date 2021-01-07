@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { f1, f2, f3, f4, f5, f6 } from './api/rpc-syntax';
 
 export default function Index(props) {

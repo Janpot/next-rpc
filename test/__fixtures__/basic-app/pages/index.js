@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { echo } from './api/rpc-route';
 
 export async function getServerSideProps() {

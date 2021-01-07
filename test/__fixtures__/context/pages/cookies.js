@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { getSomeCookie, setSomeCookie } from './api/withContext';
 
 export default function Page({ hasContext }) {

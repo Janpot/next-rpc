@@ -9,7 +9,7 @@ const getPort = require('get-port');
  * @returns Promise<void>
  */
 async function appReady(stdout) {
-  return new Promise((resolve) => {
+  return /** @type {Promise<void>} */ (new Promise((resolve) => {
     stdout.pipe(
       new Writable({
         write(chunk, encoding, callback) {
@@ -20,7 +20,7 @@ async function appReady(stdout) {
         },
       })
     );
-  });
+  }));
 }
 
 /**
