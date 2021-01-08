@@ -44,7 +44,11 @@
     "next": "next",
     "prepublishOnly": "$npm_execpath run test"
   },
+  "peerDependencies": {
+    "next": ">10"
+  },
   "dependencies": {
+    "@babel/core": "^7.12.10",
     "@babel/plugin-syntax-jsx": "^7.12.1",
     "@babel/plugin-syntax-typescript": "^7.12.1",
     "babel-loader": "^8.2.2"
