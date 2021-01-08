@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "next": "latest",
-    "next-rpc": "3.1.1",
+    "next-rpc": "latest",
     "react": "latest",
     "react-dom": "latest",
     "swr": "latest"
