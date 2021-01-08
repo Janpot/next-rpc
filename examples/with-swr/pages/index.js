@@ -1,3 +1,4 @@
+import * as React from 'react';
 import useSwr from 'swr';
 import { getGenres, getMovies } from './api/movies';
 
