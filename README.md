@@ -121,7 +121,7 @@ export default function Comedies() {
 
 ## next request context
 
-> **warning:** This feature makes use of [experimental node.js APIs](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage). Running v13.10 is required to use the following feature. Don't use this in a production environment.
+> **warning:** This feature makes use of [experimental node.js APIs](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage). Running node.js > v12.17/v13.10 is required to use the following feature.
 
 This library completely hides the network layer. This is makes it elegant to use, but also imposes limitations. To efficiently be able implement things like cookie authentication, access to the underlying requests is required. To enable that, this library introduce `next-rpc/context`. An example:
 
