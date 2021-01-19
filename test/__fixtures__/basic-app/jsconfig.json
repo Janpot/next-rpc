@@ -1,9 +1,5 @@
 {
   "compilerOptions": {
-    "noEmit": true,
-    "baseUrl": ".",
-    "paths": {
-      "next-rpc/*": ["../../../*"]
-    }
+    "noEmit": true
   }
 }
