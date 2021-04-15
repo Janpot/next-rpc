@@ -4,6 +4,14 @@ const { promises: fs } = require('fs');
 const { buildNext, startNext, cleanup } = require('./utils');
 const { default: fetch } = require('node-fetch');
 
+const PUPPETEER_OPTIONS =
+  process.arch === 'arm64'
+    ? {
+        executablePath:
+          '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      }
+    : undefined;
+
 const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/basic-app');
 
 /**
@@ -38,7 +46,7 @@ describe('basic-app', () => {
   beforeAll(async () => {
     await Promise.all([
       buildNext(FIXTURE_PATH),
-      puppeteer.launch().then((b) => (browser = b)),
+      puppeteer.launch(PUPPETEER_OPTIONS).then((b) => (browser = b)),
     ]);
     app = await startNext(FIXTURE_PATH);
   }, 30000);
