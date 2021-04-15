@@ -3,6 +3,14 @@ const puppeteer = require('puppeteer');
 const { buildNext, startNext, cleanup } = require('./utils');
 const { default: fetch } = require('node-fetch');
 
+const PUPPETEER_OPTIONS =
+  process.arch === 'arm64'
+    ? {
+        executablePath:
+          '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      }
+    : undefined;
+
 const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/context');
 
 afterAll(() => cleanup(FIXTURE_PATH));
@@ -20,7 +28,7 @@ describe('basic-app', () => {
   beforeAll(async () => {
     await Promise.all([
       buildNext(FIXTURE_PATH),
-      puppeteer.launch().then((b) => (browser = b)),
+      puppeteer.launch(PUPPETEER_OPTIONS).then((b) => (browser = b)),
     ]);
     app = await startNext(FIXTURE_PATH);
   }, 30000);
@@ -64,6 +72,26 @@ describe('basic-app', () => {
     try {
       await page.goto(new URL('/getInitialProps3', app.url).toString());
       expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should provide context through getIitialProps on Page with default export', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/getInitialProps4', app.url).toString());
+      expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should provide context in _app', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/', app.url).toString());
+      expect(await page.$('#app-has-context')).not.toBeNull();
     } finally {
       await page.close();
     }
