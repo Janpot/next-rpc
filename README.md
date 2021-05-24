@@ -123,7 +123,7 @@ export default function Comedies() {
 
 > **warning:** This feature makes use of [experimental node.js APIs](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage). Running node.js > v12.17/v13.10 is required to use the following feature.
 
-This library completely hides the network layer. This is makes it elegant to use, but also imposes limitations. To efficiently be able implement things like cookie authentication, access to the underlying requests is required. To enable that, this library introduce `next-rpc/context`. An example:
+This library completely hides the network layer. This makes it elegant to use, but also imposes limitations. To efficiently be able to implement things like cookie authentication, access to the underlying requests is required. To enable that, this library introduces `next-rpc/context`. An example:
 
 ```js
 // ./pages/api/myRpc.js
@@ -142,7 +142,7 @@ The `req` variable in the previous example will contain the `IncomingMessage` th
 - `NextPageContext`: if it traces back to `getServerSideProps` or `getInitialProps`.
 - `NextApiHandler`: if it traces back to a call in another API handler, or if it was called from the browser.
 
-`next-rpc` intercepts all instances of `getInitialProps`, `getServerSideProps` and api handlers and injects its context provider in there. From there on, every function invocation that descends from that point will be able to access the context through `getContext`. Since this feature relies on experimental APIs, that still have questionable performance characteristics, it needs to be explicitly enabled by configuring the `experimentalContext` flag in `next.config.js`:
+`next-rpc` intercepts all instances of `getInitialProps`, `getServerSideProps` and api handlers and injects its context provider in there. From there on, every function invocation that descends from that point will be able to access the context through `getContext`. Since this feature relies on experimental APIs, it needs to be explicitly enabled by configuring the `experimentalContext` flag in `next.config.js`:
 
 ```js
 // ./next.config.js
