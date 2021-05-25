@@ -94,7 +94,7 @@ Wouldn't it be nice if all of that was automatically handled and all you'd need 
 
 > Try [the example](https://github.com/Janpot/next-rpc/tree/master/examples/with-swr) on [codesandbox](https://codesandbox.io/s/github/Janpot/next-rpc/tree/master/examples/with-swr)
 
-`next-rps` can work seamlessly with [`swr`](https://github.com/zeit/swr).
+`next-rpc` can work seamlessly with [`swr`](https://github.com/zeit/swr).
 
 ```ts
 // ./pages/api/projects.js
