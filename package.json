@@ -45,7 +45,7 @@
     "prepublishOnly": "$npm_execpath run test"
   },
   "peerDependencies": {
-    "next": ">10"
+    "next": ">=10"
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
