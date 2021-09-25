@@ -119,6 +119,43 @@ export default function Comedies() {
 }
 ```
 
+## reactQuery
+
+`next-rpc` can also work with [`reactQuery`](https://github.com/tannerlinsley/react-query).
+
+```ts
+// ./pages/api/projects.js
+export const config = { rpc: true };
+
+export async function getMovies(genre) {
+  return db.query(`...`);
+}
+
+// ./pages/index.jsx
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { getMovies } from './api/movies';
+import MoviesList from '../components/MoviesList';
+
+const App = () => {
+    return (
+        <QueryClientProvider client={queryClient}>
+          <Comedies/>
+        </QueryClientProvider>
+    );
+};
+
+const Comedies = () => {
+    const {
+        isLoading,
+        error,
+        data: users
+    } = useQuery('getMovies', getMovies);
+    if (error) return <div>failed to load</div>;
+    if (isLoading) return <div>loading...</div>;
+    return <MoviesList items={data} />;
+};
+```
+
 ## next request context
 
 > **warning:** This feature makes use of [experimental node.js APIs](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage). Running node.js > v12.17/v13.10 is required to use the following feature.
