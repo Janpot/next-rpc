@@ -1,18 +1,22 @@
-const { annotateAsPure } = require('./astUtils');
+import { annotateAsPure } from './astUtils';
+import * as babel from '@babel/core';
 
-const IMPORT_PATH = 'next-rpc/lib/context';
+type Babel = typeof babel;
 
-/**
- * @typedef {{ apiDir: string, isServer: boolean }} PluginOptions
- */
+const IMPORT_PATH = 'next-rpc/dist/context-internal';
 
-/**
- * @param {import('@babel/core')} param1
- * @param {import('@babel/core').NodePath<import('@babel/core').types.Program>} path
- */
-function visitApiHandler({ types: t, ...babel }, path) {
-  /** @type {import('@babel/core').NodePath<import('@babel/core').types.ExportDefaultDeclaration> | undefined} */
-  let defaultExportPath;
+export interface PluginOptions {
+  apiDir: string;
+  isServer: boolean;
+}
+
+function visitApiHandler(
+  { types: t }: Babel,
+  path: babel.NodePath<babel.types.Program>
+) {
+  let defaultExportPath:
+    | babel.NodePath<babel.types.ExportDefaultDeclaration>
+    | undefined;
 
   path.traverse({
     ExportDefaultDeclaration(path) {
@@ -41,7 +45,6 @@ function visitApiHandler({ types: t, ...babel }, path) {
       )
     );
 
-    /** @type {import('@babel/core').types.Expression} */
     const exportAsExpression = t.isDeclaration(declaration)
       ? t.toExpression(declaration)
       : declaration;
@@ -57,11 +60,10 @@ function visitApiHandler({ types: t, ...babel }, path) {
   }
 }
 
-/**
- * @param {import('@babel/core')} param1
- * @param {import('@babel/core').NodePath<import('@babel/core').types.Program>} path
- */
-function visitPage({ types: t }, path) {
+function visitPage(
+  { types: t }: Babel,
+  path: babel.NodePath<babel.types.Program>
+) {
   const wrapGetServerSidePropsIdentifier = path.scope.generateUidIdentifier(
     'wrapGetServerSideProps'
   );
@@ -87,16 +89,13 @@ function visitPage({ types: t }, path) {
         t.isFunctionDeclaration(declaration) &&
         t.isIdentifier(declaration.id, { name: 'getServerSideProps' })
       ) {
-        /** @type {import('@babel/core').types.Expression} */
         const exportAsExpression = t.isDeclaration(declaration)
           ? t.toExpression(declaration)
           : declaration;
 
         path.node.declaration = t.variableDeclaration('const', [
           t.variableDeclarator(
-            /** @type {import('@babel/core').types.Identifier} */ (
-              declaration.id
-            ),
+            declaration.id as babel.types.Identifier,
             annotateAsPure(
               t,
               t.callExpression(wrapGetServerSidePropsIdentifier, [
@@ -145,12 +144,10 @@ function visitPage({ types: t }, path) {
   });
 }
 
-/**
- * @param {import('@babel/core')} babel
- * @param {PluginOptions} options
- * @returns {import('@babel/core').PluginObj}
- */
-module.exports = function (babel, options) {
+export default function (
+  babel: Babel,
+  options: PluginOptions
+): babel.PluginObj {
   const { apiDir, isServer } = options;
 
   return {
@@ -171,4 +168,4 @@ module.exports = function (babel, options) {
       },
     },
   };
-};
+}

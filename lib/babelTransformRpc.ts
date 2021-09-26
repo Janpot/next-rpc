@@ -1,15 +1,17 @@
-const { annotateAsPure } = require('./astUtils');
+import { annotateAsPure } from './astUtils';
+import * as babel from '@babel/core';
 
-const IMPORT_PATH_SERVER = 'next-rpc/lib/server';
-const IMPORT_PATH_BROWSER = 'next-rpc/lib/browser';
+type Babel = typeof babel;
+type BabelTypes = typeof babel.types;
 
-/**
- * @param {typeof import('@babel/core').types} t
- * @param {import('@babel/core').types.Identifier} createRpcHandlerIdentifier
- * @param {string[]} rpcMethodNames
- * @returns {import('@babel/core').types.Expression}
- */
-function buildRpcApiHandler(t, createRpcHandlerIdentifier, rpcMethodNames) {
+const IMPORT_PATH_SERVER = 'next-rpc/dist/server';
+const IMPORT_PATH_BROWSER = 'next-rpc/dist/browser';
+
+function buildRpcApiHandler(
+  t: BabelTypes,
+  createRpcHandlerIdentifier: babel.types.Identifier,
+  rpcMethodNames: string[]
+): babel.types.Expression {
   return annotateAsPure(
     t,
     t.callExpression(createRpcHandlerIdentifier, [
@@ -21,31 +23,28 @@ function buildRpcApiHandler(t, createRpcHandlerIdentifier, rpcMethodNames) {
     ])
   );
 }
-/**
- * @param {typeof import('@babel/core').types} t
- * @param {any} declaration
- * @returns {boolean}
- */
-function isAllowedTsExportDeclaration(t, declaration) {
+
+function isAllowedTsExportDeclaration(
+  t: BabelTypes,
+  declaration: any
+): boolean {
   return (
     t.isTSTypeAliasDeclaration(declaration) ||
     t.isTSInterfaceDeclaration(declaration)
   );
 }
 
-/**
- * @typedef {{ isServer: boolean, pagesDir: string, dev: boolean, apiDir: string }} PluginOptions
- */
+interface PluginOptions {
+  isServer: boolean;
+  pagesDir: string;
+  dev: boolean;
+  apiDir: string;
+}
 
-/**
- * @param {import('@babel/core')} babel
- * @param {PluginOptions} options
- * @returns {import('@babel/core').PluginObj}
- */
 module.exports = function (
-  { types: t, ...babel },
-  { apiDir, pagesDir, isServer, dev }
-) {
+  { types: t }: Babel,
+  { apiDir, pagesDir, isServer, dev }: PluginOptions
+): babel.PluginObj {
   return {
     visitor: {
       Program(path) {
@@ -66,13 +65,12 @@ module.exports = function (
           .replace(/\.[j|t]sx?$/, '')
           .replace(/\/index$/, '');
 
-        /** @type {Error[]} */
-        const errors = [];
-        /** @type {string[]} */
-        const rpcMethodNames = [];
+        const errors: Error[] = [];
+        const rpcMethodNames: string[] = [];
         let isRpc = false;
-        /** @type {import('@babel/core').NodePath<import('@babel/core').types.ExportDefaultDeclaration> | undefined} */
-        let defaultExportPath;
+        let defaultExportPath:
+          | babel.NodePath<babel.types.ExportDefaultDeclaration>
+          | undefined;
 
         path.traverse({
           ExportNamedDeclaration(path) {

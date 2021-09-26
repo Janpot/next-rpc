@@ -1,20 +1,14 @@
-/**
- * @param {string} string
- * @returns {string}
- */
-function escapeRegExp(string) {
+function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
 /**
  * Workaround for https://github.com/facebook/create-react-app/issues/4760
  * See https://github.com/zeit/next.js/blob/b88f20c90bf4659b8ad5cb2a27956005eac2c7e8/packages/next/client/dev/error-overlay/hot-dev-client.js#L105
- * @param {Error} error
- * @returns {Error}
  */
-function rewriteStacktrace(error) {
+function rewriteStacktrace(error: Error): Error {
   const toReplaceRegex = new RegExp(
-    escapeRegExp(/** @type {string} */ (process.env.__NEXT_DIST_DIR)),
+    escapeRegExp(process.env.__NEXT_DIST_DIR as string),
     'g'
   );
   error.stack =
@@ -22,13 +16,9 @@ function rewriteStacktrace(error) {
   return error;
 }
 
-/**
- * @typedef {(...params: any[]) => any} NextRpcCall
- * @param {string} url
- * @param {string} method
- * @returns {NextRpcCall}
- */
-function createRpcFetcher(url, method) {
+type NextRpcCall = (...params: any[]) => any;
+
+function createRpcFetcher(url: string, method: string): NextRpcCall {
   return function rpcFetch() {
     return fetch(url, {
       method: 'POST',

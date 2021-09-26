@@ -1,5 +1,5 @@
 const path = require('path');
-const withRpc = require('../../../lib')();
+const withRpc = require('../../..')();
 module.exports = withRpc({
   webpack(config) {
     config.resolve.alias['next-rpc'] = path.resolve(__dirname, '../../..');
