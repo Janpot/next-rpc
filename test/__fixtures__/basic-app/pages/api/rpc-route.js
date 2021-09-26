@@ -9,3 +9,7 @@ export async function echo(...params) {
 export async function throws(message, code) {
   throw Object.assign(new Error(message), { code });
 }
+
+export async function throwsNonError(thing) {
+  throw thing;
+}
