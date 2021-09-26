@@ -7,7 +7,6 @@
   "author": "Jan Potoms",
   "license": "MIT",
   "files": [
-    "lib/*",
     "dist/*",
     "context.js",
     "context.d.ts"

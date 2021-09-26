@@ -1,15 +1,14 @@
-const { annotateAsPure } = require('./astUtils');
+import { annotateAsPure } from './astUtils';
+import * as Babel from '@babel/core';
 
 const IMPORT_PATH_SERVER = 'next-rpc/dist/server';
 const IMPORT_PATH_BROWSER = 'next-rpc/dist/browser';
 
-/**
- * @param {typeof import('@babel/core').types} t
- * @param {import('@babel/core').types.Identifier} createRpcHandlerIdentifier
- * @param {string[]} rpcMethodNames
- * @returns {import('@babel/core').types.Expression}
- */
-function buildRpcApiHandler(t, createRpcHandlerIdentifier, rpcMethodNames) {
+function buildRpcApiHandler(
+  t: typeof Babel.types,
+  createRpcHandlerIdentifier: Babel.types.Identifier,
+  rpcMethodNames: string[]
+): Babel.types.Expression {
   return annotateAsPure(
     t,
     t.callExpression(createRpcHandlerIdentifier, [
@@ -21,31 +20,28 @@ function buildRpcApiHandler(t, createRpcHandlerIdentifier, rpcMethodNames) {
     ])
   );
 }
-/**
- * @param {typeof import('@babel/core').types} t
- * @param {any} declaration
- * @returns {boolean}
- */
-function isAllowedTsExportDeclaration(t, declaration) {
+
+function isAllowedTsExportDeclaration(
+  t: typeof Babel.types,
+  declaration: any
+): boolean {
   return (
     t.isTSTypeAliasDeclaration(declaration) ||
     t.isTSInterfaceDeclaration(declaration)
   );
 }
 
-/**
- * @typedef {{ isServer: boolean, pagesDir: string, dev: boolean, apiDir: string }} PluginOptions
- */
+interface PluginOptions {
+  isServer: boolean;
+  pagesDir: string;
+  dev: boolean;
+  apiDir: string;
+}
 
-/**
- * @param {import('@babel/core')} babel
- * @param {PluginOptions} options
- * @returns {import('@babel/core').PluginObj}
- */
 module.exports = function (
-  { types: t, ...babel },
-  { apiDir, pagesDir, isServer, dev }
-) {
+  { types: t, ...babel }: typeof Babel,
+  { apiDir, pagesDir, isServer, dev }: PluginOptions
+): Babel.PluginObj {
   return {
     visitor: {
       Program(path) {
@@ -66,13 +62,12 @@ module.exports = function (
           .replace(/\.[j|t]sx?$/, '')
           .replace(/\/index$/, '');
 
-        /** @type {Error[]} */
-        const errors = [];
-        /** @type {string[]} */
-        const rpcMethodNames = [];
+        const errors: Error[] = [];
+        const rpcMethodNames: string[] = [];
         let isRpc = false;
-        /** @type {import('@babel/core').NodePath<import('@babel/core').types.ExportDefaultDeclaration> | undefined} */
-        let defaultExportPath;
+        let defaultExportPath:
+          | Babel.NodePath<Babel.types.ExportDefaultDeclaration>
+          | undefined;
 
         path.traverse({
           ExportNamedDeclaration(path) {

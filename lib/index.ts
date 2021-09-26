@@ -1,38 +1,30 @@
-const { findPagesDir } = require('next/dist/lib/find-pages-dir');
-const path = require('path');
+import { findPagesDir } from 'next/dist/lib/find-pages-dir';
+import * as path from 'path';
+import * as webpack from 'webpack';
 
-/**
- * @typedef {{
- *   experimentalContext?: boolean
- * }} WithRpcConfig
- *
- * @typedef {{
- *   webpack?: any
- * }} NextConfig
- *
- * @typedef {{
- *   isServer: boolean
- *   dev: boolean
- *   dir: string
- *   defaultLoaders: {
- *     babel: any
- *   }
- * }} NextWebpackOptions
- */
+export interface WithRpcConfig {
+  experimentalContext?: boolean;
+}
 
-/**
- * @param {WithRpcConfig} withRpcConfig
- */
-module.exports = (withRpcConfig = {}) => {
-  return (nextConfig = /** @type {NextConfig} */ ({})) => {
+export interface NextConfig {
+  webpack?: any;
+}
+
+export interface NextWebpackOptions {
+  isServer: boolean;
+  dev: boolean;
+  dir: string;
+  defaultLoaders: {
+    babel: any;
+  };
+}
+
+module.exports = (withRpcConfig: WithRpcConfig = {}) => {
+  return (nextConfig: NextConfig = {}) => {
     return {
       ...nextConfig,
 
-      /**
-       * @param {import('webpack').Configuration} config
-       * @param {NextWebpackOptions} options
-       */
-      webpack(config, options) {
+      webpack(config: webpack.Configuration, options: NextWebpackOptions) {
         const { experimentalContext = false } = withRpcConfig;
         const { isServer, dev, dir } = options;
         const pagesDir = findPagesDir(dir);
@@ -51,13 +43,13 @@ module.exports = (withRpcConfig = {}) => {
                 sourceMaps: dev,
                 plugins: [
                   [
-                    require.resolve('./babelTransformRpc'),
+                    require.resolve('../dist/babelTransformRpc'),
                     { isServer, pagesDir, dev, apiDir },
                   ],
                   ...(experimentalContext
                     ? [
                         [
-                          require.resolve('./babelTransformContext'),
+                          require.resolve('../dist/babelTransformContext'),
                           { apiDir, isServer },
                         ],
                       ]
