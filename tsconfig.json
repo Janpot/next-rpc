@@ -8,9 +8,11 @@
     "esModuleInterop": true,
     "allowJs": true,
     "strict": true,
-    "noEmit": true,
-    "noUnusedLocals": true
+    "declaration": true,
+    "noUnusedLocals": true,
+    "rootDir": "lib",
+    "outDir": "dist"
   },
   "exclude": ["node_modules", "test/__fixtures__"],
-  "include": ["lib/**/*", "test/**/*", "context.d.ts"]
+  "include": ["lib/**/*"]
 }
