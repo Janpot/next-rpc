@@ -82,6 +82,21 @@ describe('basic-app', () => {
     }
   });
 
+  test('should handle when non-errors are thrown', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/throws-non-error', app.url).toString());
+      await page.waitForSelector('#error');
+      const error = await page.$eval('#error', (el) => el.textContent);
+      // avoid leaking error internals, don't forward the code
+      expect(error).toBe(
+        'Invalid value thrown in "throwsNonError", must be instance of Error : NO_CODE'
+      );
+    } finally {
+      await page.close();
+    }
+  });
+
   test('should pass all allowed syntaxes', async () => {
     const page = await browser.newPage();
     try {
