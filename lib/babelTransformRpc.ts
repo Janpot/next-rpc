@@ -1,14 +1,17 @@
 import { annotateAsPure } from './astUtils';
-import * as Babel from '@babel/core';
+import * as babel from '@babel/core';
+
+type Babel = typeof babel;
+type BabelTypes = typeof babel.types;
 
 const IMPORT_PATH_SERVER = 'next-rpc/dist/server';
 const IMPORT_PATH_BROWSER = 'next-rpc/dist/browser';
 
 function buildRpcApiHandler(
-  t: typeof Babel.types,
-  createRpcHandlerIdentifier: Babel.types.Identifier,
+  t: BabelTypes,
+  createRpcHandlerIdentifier: babel.types.Identifier,
   rpcMethodNames: string[]
-): Babel.types.Expression {
+): babel.types.Expression {
   return annotateAsPure(
     t,
     t.callExpression(createRpcHandlerIdentifier, [
@@ -22,7 +25,7 @@ function buildRpcApiHandler(
 }
 
 function isAllowedTsExportDeclaration(
-  t: typeof Babel.types,
+  t: BabelTypes,
   declaration: any
 ): boolean {
   return (
@@ -39,9 +42,9 @@ interface PluginOptions {
 }
 
 module.exports = function (
-  { types: t, ...babel }: typeof Babel,
+  { types: t }: Babel,
   { apiDir, pagesDir, isServer, dev }: PluginOptions
-): Babel.PluginObj {
+): babel.PluginObj {
   return {
     visitor: {
       Program(path) {
@@ -66,7 +69,7 @@ module.exports = function (
         const rpcMethodNames: string[] = [];
         let isRpc = false;
         let defaultExportPath:
-          | Babel.NodePath<Babel.types.ExportDefaultDeclaration>
+          | babel.NodePath<babel.types.ExportDefaultDeclaration>
           | undefined;
 
         path.traverse({

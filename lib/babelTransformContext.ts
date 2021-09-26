@@ -1,5 +1,7 @@
 import { annotateAsPure } from './astUtils';
-import * as Babel from '@babel/core';
+import * as babel from '@babel/core';
+
+type Babel = typeof babel;
 
 const IMPORT_PATH = 'next-rpc/dist/context-internal';
 
@@ -9,11 +11,11 @@ export interface PluginOptions {
 }
 
 function visitApiHandler(
-  { types: t, ...babel }: typeof Babel,
-  path: Babel.NodePath<Babel.types.Program>
+  { types: t }: Babel,
+  path: babel.NodePath<babel.types.Program>
 ) {
   let defaultExportPath:
-    | Babel.NodePath<Babel.types.ExportDefaultDeclaration>
+    | babel.NodePath<babel.types.ExportDefaultDeclaration>
     | undefined;
 
   path.traverse({
@@ -59,8 +61,8 @@ function visitApiHandler(
 }
 
 function visitPage(
-  { types: t }: typeof Babel,
-  path: Babel.NodePath<Babel.types.Program>
+  { types: t }: Babel,
+  path: babel.NodePath<babel.types.Program>
 ) {
   const wrapGetServerSidePropsIdentifier = path.scope.generateUidIdentifier(
     'wrapGetServerSideProps'
@@ -93,7 +95,7 @@ function visitPage(
 
         path.node.declaration = t.variableDeclaration('const', [
           t.variableDeclarator(
-            declaration.id as Babel.types.Identifier,
+            declaration.id as babel.types.Identifier,
             annotateAsPure(
               t,
               t.callExpression(wrapGetServerSidePropsIdentifier, [
@@ -143,9 +145,9 @@ function visitPage(
 }
 
 export default function (
-  babel: typeof Babel,
+  babel: Babel,
   options: PluginOptions
-): Babel.PluginObj {
+): babel.PluginObj {
   const { apiDir, isServer } = options;
 
   return {
