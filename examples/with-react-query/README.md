@@ -1,4 +1,4 @@
-# Example with `reat-query`
+# Example with `react-query`
 
 Shows how to use `next-rpc` together with [`react-query`](https://react-query.tanstack.com/).
 
