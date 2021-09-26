@@ -2,12 +2,14 @@
   "name": "next-rpc",
   "version": "3.1.6",
   "description": "Call serverside code from the browser in next.js applications",
-  "main": "dist/index.js",
+  "main": "index.js",
   "repository": "https://github.com/Janpot/next-rpc",
   "author": "Jan Potoms",
   "license": "MIT",
   "files": [
     "dist/*",
+    "index.js",
+    "index.d.ts",
     "context.js",
     "context.d.ts"
   ],

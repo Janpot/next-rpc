@@ -1,30 +1,18 @@
 import { findPagesDir } from 'next/dist/lib/find-pages-dir';
 import * as path from 'path';
 import * as webpack from 'webpack';
+import { NextConfig } from 'next';
 
 export interface WithRpcConfig {
   experimentalContext?: boolean;
 }
 
-export interface NextConfig {
-  webpack?: any;
-}
-
-export interface NextWebpackOptions {
-  isServer: boolean;
-  dev: boolean;
-  dir: string;
-  defaultLoaders: {
-    babel: any;
-  };
-}
-
-module.exports = (withRpcConfig: WithRpcConfig = {}) => {
-  return (nextConfig: NextConfig = {}) => {
+export default function init(withRpcConfig: WithRpcConfig = {}) {
+  return (nextConfig: NextConfig = {}): NextConfig => {
     return {
       ...nextConfig,
 
-      webpack(config: webpack.Configuration, options: NextWebpackOptions) {
+      webpack(config: webpack.Configuration, options) {
         const { experimentalContext = false } = withRpcConfig;
         const { isServer, dev, dir } = options;
         const pagesDir = findPagesDir(dir);
@@ -73,4 +61,4 @@ module.exports = (withRpcConfig: WithRpcConfig = {}) => {
       },
     };
   };
-};
+}
