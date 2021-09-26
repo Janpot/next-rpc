@@ -70,6 +70,8 @@ This pattern is great as it avoids hitting the network when used serverside. Unf
 
 Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getName` on the browserside, just like you do serverside? That's where `next-rpc` comes in. With a `next-rpc` enabled API route, all its exported functions automatically become available to the browser as well.
 
+> **Note:** `next-rpc` is not meant as a full replacement for Next.js API routes. Some use cases are still better solved with classic API routes. For instance when you want to rely on the existing browser caching mechanisms.
+
 ## Rules and limitations
 
 1. Rpc routes are **only allowed to export async functions**. They also need to be statically analyzable as such. Therefore only the following is allowed, either:
