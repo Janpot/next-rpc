@@ -1,6 +1,6 @@
 # Example with `swr`
 
-Shows how to use `next-rpc` together with [`swr`](https://www.npmjs.com/package/swr).
+Shows how to use `next-rpc` together with [`swr`](https://swr.vercel.app/).
 
 ## How to use
 

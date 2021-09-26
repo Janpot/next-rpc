@@ -94,7 +94,7 @@ Wouldn't it be nice if all of that was automatically handled and all you'd need 
 
 > Try [the example](https://github.com/Janpot/next-rpc/tree/master/examples/with-swr) on [codesandbox](https://codesandbox.io/s/github/Janpot/next-rpc/tree/master/examples/with-swr)
 
-`next-rpc` can work seamlessly with [`swr`](https://github.com/zeit/swr).
+`next-rpc` can work seamlessly with [`swr`](https://swr.vercel.app/).
 
 ```ts
 // ./pages/api/projects.js
@@ -115,6 +115,44 @@ export default function Comedies() {
   const { data, error } = useSwr([getMovies, 'comedy'], callFn);
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
+  return <MoviesList items={data} />;
+}
+```
+
+## react-query
+
+> Try [the example](https://github.com/Janpot/next-rpc/tree/master/examples/with-react-query) on [codesandbox](https://codesandbox.io/s/github/Janpot/next-rpc/tree/master/examples/with-react-query)
+
+`next-rpc` can also work with [`react-query`](https://react-query.tanstack.com/).
+
+```ts
+// ./pages/api/projects.js
+export const config = { rpc: true };
+
+export async function getMovies(genre) {
+  return db.query(`...`);
+}
+
+// ./pages/index.jsx
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { getMovies } from './api/movies';
+import MoviesList from '../components/MoviesList';
+
+function App() {
+  const queryClient = React.useMemo(() => new QueryClient(), []);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Movies genre="comedy" />
+    </QueryClientProvider>
+  );
+}
+
+export default function Movies({ genre = 'comedy' }) {
+  const { isLoading, error, data } = useQuery(['getMovies', genre], () =>
+    getMovies(genre)
+  );
+  if (error) return <div>failed to load</div>;
+  if (isLoading) return <div>loading...</div>;
   return <MoviesList items={data} />;
 }
 ```

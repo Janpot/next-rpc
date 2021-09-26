@@ -1,0 +1,17 @@
+{
+  "name": "with-react-query",
+  "version": "0.1.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "latest",
+    "next-rpc": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-query": "latest"
+  }
+}
