@@ -202,3 +202,7 @@ It's important to note that `next-rpc` intends to be fully backwards compatible.
 
 - **Improve dev experience:** warn when using unserializable input/output
 - **Custom contexts:** it should be possible to build on the context feature to provide a custom context. e.g. `UserContext`.
+
+## Contributing
+
+Bug fixing PRs are welcome, provided they are of high quality and accompagnied by tests. Don't open PRs for feature requests prior to my approval.
