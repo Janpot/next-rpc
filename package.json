@@ -40,7 +40,7 @@
     "prettier": "prettier --check \"**/*.{js,ts,jsx,tsx,json,yml,md}\"",
     "lint": "$npm_execpath run prettier",
     "jest": "jest --testRunner='jest-circus/runner' --runInBand",
-    "test": "$npm_execpath run lint && $npm_execpath run jest --runInBand",
+    "test": "$npm_execpath run lint && $npm_execpath run jest",
     "fix": "$npm_execpath run prettier -- --write",
     "next": "next",
     "prepublishOnly": "$npm_execpath run build && $npm_execpath run test",
