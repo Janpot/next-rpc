@@ -1,7 +1,7 @@
 {
   "name": "next-rpc",
   "version": "3.2.0-canary.0",
-  "description": "Call serverside code from the browser in next.js applications",
+  "description": "Call serverside code from the browser in Next.js applications",
   "main": "index.js",
   "repository": "https://github.com/Janpot/next-rpc",
   "author": "Jan Potoms",
