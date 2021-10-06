@@ -45,7 +45,7 @@
     "next": "next",
     "prepublishOnly": "$npm_execpath run build && $npm_execpath run test",
     "build": "tsc",
-    "watch": "tsc --watch"
+    "dev": "tsc --watch"
   },
   "peerDependencies": {
     "next": ">=10"
