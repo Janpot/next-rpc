@@ -34,16 +34,17 @@ function isAllowedTsExportDeclaration(
   );
 }
 
-interface PluginOptions {
+export interface PluginOptions {
   isServer: boolean;
   pagesDir: string;
   dev: boolean;
   apiDir: string;
+  basePath: string;
 }
 
-module.exports = function (
+export default function (
   { types: t }: Babel,
-  { apiDir, pagesDir, isServer, dev }: PluginOptions
+  { apiDir, pagesDir, isServer, basePath }: PluginOptions
 ): babel.PluginObj {
   return {
     visitor: {
@@ -60,10 +61,13 @@ module.exports = function (
           return;
         }
 
-        const rpcPath = filename
+        const rpcRelativePath = filename
           .slice(pagesDir.length)
           .replace(/\.[j|t]sx?$/, '')
           .replace(/\/index$/, '');
+
+        const rpcPath =
+          basePath === '/' ? rpcRelativePath : `${basePath}/${rpcRelativePath}`;
 
         const errors: Error[] = [];
         const rpcMethodNames: string[] = [];
@@ -213,4 +217,4 @@ module.exports = function (
       },
     },
   };
-};
+}

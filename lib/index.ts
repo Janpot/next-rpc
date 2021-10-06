@@ -2,6 +2,8 @@ import { findPagesDir } from 'next/dist/lib/find-pages-dir';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import { NextConfig } from 'next';
+import { PluginOptions as RpcPluginOptions } from './babelTransformRpc';
+import { PluginOptions as ContextPluginOptions } from './babelTransformContext';
 
 export interface WithRpcConfig {
   experimentalContext?: boolean;
@@ -18,6 +20,16 @@ export default function init(withRpcConfig: WithRpcConfig = {}) {
         const pagesDir = findPagesDir(dir);
         const apiDir = path.resolve(pagesDir, './api');
 
+        const rpcPluginOptions: RpcPluginOptions = {
+          isServer,
+          pagesDir,
+          dev,
+          apiDir,
+          basePath: nextConfig.basePath || '/',
+        };
+
+        const contextPluginOptions: ContextPluginOptions = { apiDir, isServer };
+
         config.module = config.module || {};
         config.module.rules = config.module.rules || [];
         config.module.rules.push({
@@ -32,13 +44,13 @@ export default function init(withRpcConfig: WithRpcConfig = {}) {
                 plugins: [
                   [
                     require.resolve('../dist/babelTransformRpc'),
-                    { isServer, pagesDir, dev, apiDir },
+                    rpcPluginOptions,
                   ],
                   ...(experimentalContext
                     ? [
                         [
                           require.resolve('../dist/babelTransformContext'),
-                          { apiDir, isServer },
+                          contextPluginOptions,
                         ],
                       ]
                     : []),
