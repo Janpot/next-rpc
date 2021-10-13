@@ -1,6 +1,6 @@
 # next-rpc
 
-> `next-rpc` makes exported functions from API routes accessible in the browser. Just import your API function and call it anywhere you want.
+`next-rpc` makes exported functions from API routes accessible in the browser. Just import your API function and call it anywhere you want.
 
 ## Example
 
