@@ -65,7 +65,11 @@ async function startNext(appPath, port) {
 async function cleanup(appPath) {
   try {
     await fs.rm(path.resolve(appPath, './.next'), { recursive: true });
-  } catch {}
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      throw err;
+    }
+  }
 }
 
 module.exports = {
