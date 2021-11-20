@@ -2,14 +2,6 @@ import * as path from 'path';
 import puppeteer, { Browser } from 'puppeteer';
 import { buildNext, startNext, cleanup, RunningNextApp } from './utils';
 
-const PUPPETEER_OPTIONS =
-  process.arch === 'arm64'
-    ? {
-        executablePath:
-          '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-      }
-    : undefined;
-
 const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/basePath');
 
 afterAll(() => cleanup(FIXTURE_PATH));
@@ -21,7 +13,7 @@ describe('basic-app', () => {
   beforeAll(async () => {
     await Promise.all([
       buildNext(FIXTURE_PATH),
-      puppeteer.launch(PUPPETEER_OPTIONS).then((b) => (browser = b)),
+      puppeteer.launch().then((b) => (browser = b)),
     ]);
     app = await startNext(FIXTURE_PATH);
   }, 30000);
