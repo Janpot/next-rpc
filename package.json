@@ -14,27 +14,29 @@
     "context.d.ts"
   ],
   "devDependencies": {
+    "@swc/core": "^1.2.111",
+    "@swc/jest": "^0.2.5",
     "@types/babel__core": "^7.1.14",
     "@types/execa": "^2.0.0",
-    "@types/jest": "^27.0.2",
-    "@types/node": "^16.10.1",
-    "@types/node-fetch": "^2.5.10",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.9",
+    "@types/node-fetch": "^3.0.3",
     "@types/puppeteer": "^5.4.3",
-    "@types/react": "^17.0.3",
-    "@types/react-dom": "^17.0.3",
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11",
     "@types/webpack": "^5.28.0",
-    "execa": "^5.0.0",
-    "get-port": "^5.1.1",
-    "jest": "^27.2.2",
-    "jest-circus": "^27.2.2",
-    "next": "^11.1.3-canary.32",
+    "execa": "^6.0.0",
+    "get-port": "^6.0.0",
+    "jest": "^27.3.1",
+    "jest-circus": "^27.3.1",
+    "next": "^12.0.4",
     "next.js": "^1.0.3",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.0",
     "prettier": "^2.2.1",
-    "puppeteer": "10",
+    "puppeteer": "11.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "typescript": "^4.2.4"
+    "typescript": "^4.5.2"
   },
   "scripts": {
     "prettier": "prettier --check \"**/*.{js,ts,jsx,tsx,json,yml,md}\"",
@@ -51,9 +53,9 @@
     "next": ">=10"
   },
   "dependencies": {
-    "@babel/core": "^7.13.15",
-    "@babel/plugin-syntax-jsx": "^7.12.13",
-    "@babel/plugin-syntax-typescript": "^7.12.13",
-    "babel-loader": "^8.2.2"
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-syntax-jsx": "^7.16.0",
+    "@babel/plugin-syntax-typescript": "^7.16.0",
+    "babel-loader": "^8.2.3"
   }
 }

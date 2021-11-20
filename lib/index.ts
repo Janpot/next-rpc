@@ -5,6 +5,10 @@ import { NextConfig } from 'next';
 import { PluginOptions as RpcPluginOptions } from './babelTransformRpc';
 import { PluginOptions as ContextPluginOptions } from './babelTransformContext';
 
+export interface NextRpcConfig {
+  rpc: true;
+}
+
 export interface WithRpcConfig {
   experimentalContext?: boolean;
 }

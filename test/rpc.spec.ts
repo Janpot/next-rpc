@@ -1,8 +1,9 @@
-const path = require('path');
-const puppeteer = require('puppeteer');
-const { promises: fs } = require('fs');
-const { buildNext, startNext, cleanup } = require('./utils');
-const { default: fetch } = require('node-fetch');
+import path from 'path';
+import puppeteer from 'puppeteer';
+import * as fs from 'fs/promises';
+import { buildNext, startNext, cleanup, RunningNextApp } from './utils';
+import fetch from 'node-fetch';
+import { Browser } from 'puppeteer';
 
 const PUPPETEER_OPTIONS =
   process.arch === 'arm64'
@@ -14,13 +15,11 @@ const PUPPETEER_OPTIONS =
 
 const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/basic-app');
 
-/**
- * @param {string} filepath
- * @param {string} test
- * @param {() => Promise<void>} assertions
- * @returns {Promise<void>}
- */
-async function withEnabledTest(filepath, test, assertions) {
+async function withEnabledTest(
+  filepath: string,
+  test: string,
+  assertions: () => Promise<void>
+): Promise<void> {
   const content = await fs.readFile(filepath, { encoding: 'utf-8' });
   const newContent = content.replace(`/* TEST "${test}"`, '');
   try {
@@ -34,14 +33,8 @@ async function withEnabledTest(filepath, test, assertions) {
 afterAll(() => cleanup(FIXTURE_PATH));
 
 describe('basic-app', () => {
-  /**
-   * @type {import('puppeteer').Browser}
-   */
-  let browser;
-  /**
-   * @type {import('./utils').RunningNextApp}
-   */
-  let app;
+  let browser: Browser;
+  let app: RunningNextApp;
 
   beforeAll(async () => {
     await Promise.all([

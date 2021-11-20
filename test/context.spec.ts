@@ -1,7 +1,7 @@
-const path = require('path');
-const puppeteer = require('puppeteer');
-const { buildNext, startNext, cleanup } = require('./utils');
-const { default: fetch } = require('node-fetch');
+import * as path from 'path';
+import puppeteer, { Browser } from 'puppeteer';
+import { buildNext, startNext, cleanup, RunningNextApp } from './utils';
+import fetch from 'node-fetch';
 
 const PUPPETEER_OPTIONS =
   process.arch === 'arm64'
@@ -16,14 +16,8 @@ const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/context');
 afterAll(() => cleanup(FIXTURE_PATH));
 
 describe('basic-app', () => {
-  /**
-   * @type {import('puppeteer').Browser}
-   */
-  let browser;
-  /**
-   * @type {import('./utils').RunningNextApp}
-   */
-  let app;
+  let browser: Browser;
+  let app: RunningNextApp;
 
   beforeAll(async () => {
     await Promise.all([

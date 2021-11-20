@@ -1,5 +1,5 @@
-const path = require('path');
-const { buildNext, cleanup } = require('./utils');
+import * as path from 'path';
+import { buildNext, cleanup } from './utils';
 
 const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/typescript');
 
