@@ -50,10 +50,10 @@ function getConfigObjectExpression(
   }
 }
 
-function isRpcProgram(
+function getConfigObject(
   t: BabelTypes,
   path: babel.NodePath<babel.types.Program>
-): boolean {
+): babel.types.ObjectExpression | null {
   for (const node of path.node.body) {
     if (t.isExportNamedDeclaration(node)) {
       const { declaration } = node;
@@ -64,22 +64,29 @@ function isRpcProgram(
         for (const varDeclaration of declaration.declarations) {
           const configObject = getConfigObjectExpression(t, varDeclaration);
           if (configObject) {
-            for (const property of configObject.properties) {
-              if (
-                t.isObjectProperty(property) &&
-                t.isIdentifier(property.key) &&
-                property.key.name === 'rpc' &&
-                t.isBooleanLiteral(property.value, { value: true })
-              ) {
-                return true;
-              }
-            }
+            return configObject;
           }
         }
       }
     }
   }
+  return null;
+}
 
+function isRpc(
+  t: BabelTypes,
+  configObject: babel.types.ObjectExpression
+): boolean {
+  for (const property of configObject.properties) {
+    if (
+      t.isObjectProperty(property) &&
+      t.isIdentifier(property.key) &&
+      property.key.name === 'rpc' &&
+      t.isBooleanLiteral(property.value, { value: true })
+    ) {
+      return true;
+    }
+  }
   return false;
 }
 
@@ -110,7 +117,9 @@ export default function (
           return;
         }
 
-        if (!isRpcProgram(t, path)) {
+        const configObject = getConfigObject(t, path);
+
+        if (!configObject || !isRpc(t, configObject)) {
           return;
         }
 
