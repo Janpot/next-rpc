@@ -179,7 +179,6 @@ export default function (
                           createRpcMethod(t.toExpression(declaration.node), {
                             name: methodName,
                             pathname: rpcPath,
-                            filename,
                           })
                         ),
                       ])
@@ -213,7 +212,6 @@ export default function (
                         createRpcMethod(init.node, {
                           name: methodName,
                           pathname: rpcPath,
-                          filename,
                         })
                       );
                     }

@@ -4,7 +4,6 @@ export type Method<P extends any[], R> = (...params: P) => Promise<R>;
 export type WrapMethodMeta = {
   name: string;
   pathname: string;
-  filename: string;
 };
 
 export interface WrapMethod {
