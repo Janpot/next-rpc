@@ -159,7 +159,29 @@ export default function Movies({ genre = 'comedy' }) {
 }
 ```
 
-## next request context
+## Middleware
+
+`next-rpc` allows for defining middleware functions that automatically wrap all your API methods. this could be useful for logging purposes. To define such middleware you can supply a `wrapMethod` option to the `config` export. This function receives the method it's wrapping along with some metadata and is expected to return a function with the exact same signature. Example:
+
+```tsx
+import { NextRpcConfig, WrapMethod } from 'next-rpc';
+
+const wrapMethod: WrapMethod = (method, meta) => {
+  return async (...args) => {
+    console.log(`calling "${meta.name}" on "${meta.pathname}" with ${args}`);
+    const result = await method(...args);
+    console.log(`result: ${result}`);
+    return result;
+  };
+};
+
+export const config: NextRpcConfig = {
+  rpc: true,
+  wrapMethod,
+};
+```
+
+## Next.js request context
 
 > **warning:** This feature makes use of [experimental node.js APIs](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage). Running node.js > v12.17/v13.10 is required to use the following feature.
 
