@@ -1,5 +1,6 @@
 import { annotateAsPure, literalToAst } from './astUtils';
 import * as babel from '@babel/core';
+import { WrapMethodMeta } from './server';
 
 type Babel = typeof babel;
 type BabelTypes = typeof babel.types;
@@ -130,7 +131,7 @@ export default function (
           rpcMethod:
             | babel.types.ArrowFunctionExpression
             | babel.types.FunctionExpression,
-          meta: { name: string }
+          meta: WrapMethodMeta
         ) => {
           return t.callExpression(createRpcMethodIdentifier, [
             rpcMethod,
@@ -163,6 +164,8 @@ export default function (
                           t.identifier(methodName),
                           createRpcMethod(t.toExpression(declaration), {
                             name: methodName,
+                            pathname: rpcPath,
+                            filename,
                           })
                         ),
                       ])
@@ -195,6 +198,8 @@ export default function (
                         varDeclaration.init,
                         {
                           name: methodName,
+                          pathname: rpcPath,
+                          filename,
                         }
                       );
                     }

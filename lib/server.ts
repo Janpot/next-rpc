@@ -1,9 +1,11 @@
 import { NextApiHandler, NextApiResponse } from 'next';
 
 export type Method<P extends any[], R> = (...params: P) => Promise<R>;
-export interface WrapMethodMeta {
+export type WrapMethodMeta = {
   name: string;
-}
+  pathname: string;
+  filename: string;
+};
 export type WrapMethod<P extends any[], R> = (
   method: Method<P, R>,
   meta: WrapMethodMeta
