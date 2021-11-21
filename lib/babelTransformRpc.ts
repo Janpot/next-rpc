@@ -34,6 +34,55 @@ function isAllowedTsExportDeclaration(
   );
 }
 
+function getConfigObjectExpression(
+  t: BabelTypes,
+  varDeclaration: babel.types.VariableDeclarator
+): babel.types.ObjectExpression | null {
+  if (
+    t.isIdentifier(varDeclaration.id) &&
+    varDeclaration.id.name === 'config' &&
+    t.isObjectExpression(varDeclaration.init)
+  ) {
+    return varDeclaration.init;
+  } else {
+    return null;
+  }
+}
+
+function isRpcProgram(
+  t: BabelTypes,
+  path: babel.NodePath<babel.types.Program>
+): boolean {
+  let isRpc = false;
+  path.traverse({
+    ExportNamedDeclaration(path) {
+      const { declaration } = path.node;
+      if (
+        t.isVariableDeclaration(declaration) &&
+        declaration.kind === 'const'
+      ) {
+        for (const varDeclaration of declaration.declarations) {
+          const configObjectExpression = getConfigObjectExpression(
+            t,
+            varDeclaration
+          );
+          if (configObjectExpression) {
+            isRpc = configObjectExpression.properties.some((property) => {
+              return (
+                t.isObjectProperty(property) &&
+                t.isIdentifier(property.key) &&
+                property.key.name === 'rpc' &&
+                t.isBooleanLiteral(property.value, { value: true })
+              );
+            });
+          }
+        }
+      }
+    },
+  });
+  return isRpc;
+}
+
 export interface PluginOptions {
   isServer: boolean;
   pagesDir: string;
@@ -61,6 +110,10 @@ export default function (
           return;
         }
 
+        if (!isRpcProgram(t, path)) {
+          return;
+        }
+
         const rpcRelativePath = filename
           .slice(pagesDir.length)
           .replace(/\.[j|t]sx?$/, '')
@@ -71,7 +124,6 @@ export default function (
 
         const errors: Error[] = [];
         const rpcMethodNames: string[] = [];
-        let isRpc = false;
         let defaultExportPath:
           | babel.NodePath<babel.types.ExportDefaultDeclaration>
           | undefined;
@@ -97,20 +149,8 @@ export default function (
               declaration.kind === 'const'
             ) {
               for (const varDeclaration of declaration.declarations) {
-                if (
-                  t.isIdentifier(varDeclaration.id) &&
-                  varDeclaration.id.name === 'config' &&
-                  t.isObjectExpression(varDeclaration.init) &&
-                  varDeclaration.init.properties.some((property) => {
-                    return (
-                      t.isObjectProperty(property) &&
-                      t.isIdentifier(property.key) &&
-                      property.key.name === 'rpc' &&
-                      t.isBooleanLiteral(property.value, { value: true })
-                    );
-                  })
-                ) {
-                  isRpc = true;
+                if (getConfigObjectExpression(t, varDeclaration)) {
+                  // ignore
                 } else if (
                   t.isFunctionExpression(varDeclaration.init) ||
                   t.isArrowFunctionExpression(varDeclaration.init)
@@ -144,10 +184,6 @@ export default function (
             defaultExportPath = path;
           },
         });
-
-        if (!isRpc) {
-          return;
-        }
 
         if (errors.length > 0) {
           throw errors[0];
