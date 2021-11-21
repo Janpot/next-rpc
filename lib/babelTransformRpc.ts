@@ -53,34 +53,33 @@ function isRpcProgram(
   t: BabelTypes,
   path: babel.NodePath<babel.types.Program>
 ): boolean {
-  let isRpc = false;
-  path.traverse({
-    ExportNamedDeclaration(path) {
-      const { declaration } = path.node;
+  for (const node of path.node.body) {
+    if (t.isExportNamedDeclaration(node)) {
+      const { declaration } = node;
       if (
         t.isVariableDeclaration(declaration) &&
         declaration.kind === 'const'
       ) {
         for (const varDeclaration of declaration.declarations) {
-          const configObjectExpression = getConfigObjectExpression(
-            t,
-            varDeclaration
-          );
-          if (configObjectExpression) {
-            isRpc = configObjectExpression.properties.some((property) => {
-              return (
+          const configObject = getConfigObjectExpression(t, varDeclaration);
+          if (configObject) {
+            for (const property of configObject.properties) {
+              if (
                 t.isObjectProperty(property) &&
                 t.isIdentifier(property.key) &&
                 property.key.name === 'rpc' &&
                 t.isBooleanLiteral(property.value, { value: true })
-              );
-            });
+              ) {
+                return true;
+              }
+            }
           }
         }
       }
-    },
-  });
-  return isRpc;
+    }
+  }
+
+  return false;
 }
 
 export interface PluginOptions {
@@ -122,11 +121,7 @@ export default function (
         const rpcPath =
           basePath === '/' ? rpcRelativePath : `${basePath}/${rpcRelativePath}`;
 
-        const errors: Error[] = [];
         const rpcMethodNames: string[] = [];
-        let defaultExportPath:
-          | babel.NodePath<babel.types.ExportDefaultDeclaration>
-          | undefined;
 
         path.traverse({
           ExportNamedDeclaration(path) {
@@ -135,10 +130,8 @@ export default function (
               return;
             } else if (t.isFunctionDeclaration(declaration)) {
               if (!declaration.async) {
-                errors.push(
-                  path.buildCodeFrameError(
-                    'rpc exports must be declared "async"'
-                  )
+                throw path.buildCodeFrameError(
+                  'rpc exports must be declared "async"'
                 );
               }
               if (declaration.id) {
@@ -156,10 +149,8 @@ export default function (
                   t.isArrowFunctionExpression(varDeclaration.init)
                 ) {
                   if (!varDeclaration.init.async) {
-                    errors.push(
-                      path.buildCodeFrameError(
-                        'rpc exports must be declared "async"'
-                      )
+                    throw path.buildCodeFrameError(
+                      'rpc exports must be declared "async"'
                     );
                   }
                   const { id } = varDeclaration;
@@ -167,33 +158,23 @@ export default function (
                     rpcMethodNames.push(id.name);
                   }
                 } else {
-                  errors.push(
-                    path.buildCodeFrameError(
-                      'rpc exports must be static functions'
-                    )
+                  throw path.buildCodeFrameError(
+                    'rpc exports must be static functions'
                   );
                 }
               }
             } else {
-              errors.push(
-                path.buildCodeFrameError('rpc exports must be static functions')
+              throw path.buildCodeFrameError(
+                'rpc exports must be static functions'
               );
             }
           },
           ExportDefaultDeclaration(path) {
-            defaultExportPath = path;
+            throw path.buildCodeFrameError(
+              'default exports are not allowed in rpc routes'
+            );
           },
         });
-
-        if (errors.length > 0) {
-          throw errors[0];
-        }
-
-        if (defaultExportPath) {
-          throw path.buildCodeFrameError(
-            'default exports are not allowed in rpc routes'
-          );
-        }
 
         if (isServer) {
           const createRpcHandlerIdentifier =
