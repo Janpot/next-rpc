@@ -130,6 +130,52 @@ describe('basic-app', () => {
       expect.stringMatching('method "GET" is not allowed')
     );
   });
+
+  test('should wrap methods 1', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/wrapped1', app.url).toString());
+      const ssrData = await page.$eval('#ssr', (el) => el.textContent);
+      expect(ssrData).toBe('wrapped result "original called with foo,bar"');
+      await page.waitForSelector('#browser');
+      const browserData = await page.$eval('#browser', (el) => el.textContent);
+      expect(browserData).toBe(
+        'wrapped result "original called with baz,quux"'
+      );
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should wrap methods 2', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/wrapped2', app.url).toString());
+      const ssrData = await page.$eval('#ssr', (el) => el.textContent);
+      expect(ssrData).toBe('wrapped result "original called with bar,foo"');
+      await page.waitForSelector('#browser');
+      const browserData = await page.$eval('#browser', (el) => el.textContent);
+      expect(browserData).toBe(
+        'wrapped result "original called with quux,baz"'
+      );
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should wrap methods 3', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/wrapped3', app.url).toString());
+      const ssrData = await page.$eval('#ssr', (el) => el.textContent);
+      expect(ssrData).toBe('wrapped result "original called with quux,foo"');
+      await page.waitForSelector('#browser');
+      const browserData = await page.$eval('#browser', (el) => el.textContent);
+      expect(browserData).toBe('wrapped result "original called with bar,baz"');
+    } finally {
+      await page.close();
+    }
+  });
 });
 
 describe('build', () => {
@@ -155,7 +201,7 @@ describe('build', () => {
         const build = buildNext(FIXTURE_PATH);
         await expect(build).rejects.toHaveProperty(
           'message',
-          expect.stringMatching('rpc exports must be declared "async"')
+          expect.stringMatching('rpc exports must be async functions')
         );
       }
     );
@@ -169,7 +215,7 @@ describe('build', () => {
         const build = buildNext(FIXTURE_PATH);
         await expect(build).rejects.toHaveProperty(
           'message',
-          expect.stringMatching('rpc exports must be declared "async"')
+          expect.stringMatching('rpc exports must be async functions')
         );
       }
     );
@@ -183,7 +229,7 @@ describe('build', () => {
         const build = buildNext(FIXTURE_PATH);
         await expect(build).rejects.toHaveProperty(
           'message',
-          expect.stringMatching('rpc exports must be declared "async"')
+          expect.stringMatching('rpc exports must be async functions')
         );
       }
     );
