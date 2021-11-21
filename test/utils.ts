@@ -3,13 +3,18 @@ import * as fs from 'fs/promises';
 import { Writable, Readable } from 'stream';
 import * as path from 'path';
 import getPort from 'get-port';
+import { ChildProcess } from 'child_process';
+import stripAnsi from 'strip-ansi';
+
+const VERBOSE = true;
+const FORCE_COLOR = true;
 
 async function appReady(stdout: Readable): Promise<void> {
   return new Promise<void>((resolve) => {
     stdout.pipe(
       new Writable({
         write(chunk, encoding, callback) {
-          if (/ready - started server on/i.test(String(chunk))) {
+          if (/ready - started server on/i.test(stripAnsi(String(chunk)))) {
             resolve();
           }
           callback();
@@ -19,12 +24,26 @@ async function appReady(stdout: Readable): Promise<void> {
   });
 }
 
+function redirectOutput(cp: ChildProcess) {
+  if (VERBOSE) {
+    process.stdin.pipe(cp.stdin);
+    cp.stdout.pipe(process.stdout);
+    cp.stderr.pipe(process.stderr);
+  }
+}
+
 export async function buildNext(appPath: string) {
-  await execa('next', ['build'], {
+  const cp = execa('next', ['build'], {
     preferLocal: true,
     cwd: appPath,
+    env: {
+      FORCE_COLOR: VERBOSE ? '1' : '0',
+    },
   });
+  redirectOutput(cp);
+  await cp;
 }
+
 export interface RunningNextApp {
   url: string;
   kill: (...args: any[]) => boolean;
@@ -38,7 +57,11 @@ export async function startNext(
   const app = execa('next', ['start', '-p', String(port)], {
     preferLocal: true,
     cwd: appPath,
+    env: {
+      FORCE_COLOR: FORCE_COLOR ? '1' : '0',
+    },
   });
+  redirectOutput(app);
   await appReady(app.stdout);
   return {
     url: `http://localhost:${port}/`,
