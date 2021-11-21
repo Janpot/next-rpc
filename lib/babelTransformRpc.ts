@@ -145,7 +145,10 @@ export default function (
           return t.callExpression(createRpcMethodIdentifier, [
             rpcMethod,
             literalToAst(t, meta),
-            t.nullLiteral(),
+            t.memberExpression(
+              t.identifier('config'),
+              t.identifier('wrapMethod')
+            ),
           ]);
         };
 
