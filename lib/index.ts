@@ -8,12 +8,14 @@ import { WrapMethod } from './server';
 
 export interface NextRpcConfig {
   rpc: true;
-  wrapMethod?: WrapMethod<unknown[], unknown>;
+  wrapMethod?: WrapMethod;
 }
 
 export interface WithRpcConfig {
   experimentalContext?: boolean;
 }
+
+export { WrapMethod };
 
 export default function init(withRpcConfig: WithRpcConfig = {}) {
   return (nextConfig: NextConfig = {}): NextConfig => {

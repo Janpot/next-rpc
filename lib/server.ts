@@ -6,10 +6,13 @@ export type WrapMethodMeta = {
   pathname: string;
   filename: string;
 };
-export type WrapMethod<P extends any[], R> = (
-  method: Method<P, R>,
-  meta: WrapMethodMeta
-) => Method<P, R>;
+
+export interface WrapMethod {
+  <P extends any[], R = any>(
+    method: Method<P, R>,
+    meta: WrapMethodMeta
+  ): Method<P, R>;
+}
 
 function sendError(res: NextApiResponse, status: number, message: string) {
   res.status(status).json({ error: { message } });
