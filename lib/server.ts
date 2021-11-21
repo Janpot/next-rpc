@@ -1,10 +1,43 @@
 import { NextApiHandler, NextApiResponse } from 'next';
 
+export type Method<P extends any[], R> = (...params: P) => Promise<R>;
+export interface WrapMethodMeta {
+  name: string;
+}
+export type WrapMethod<P extends any[], R> = (
+  method: Method<P, R>,
+  meta: WrapMethodMeta
+) => Method<P, R>;
+
 function sendError(res: NextApiResponse, status: number, message: string) {
   res.status(status).json({ error: { message } });
 }
 
-function createRpcHandler(
+export function createRpcMethod<P extends any[], R>(
+  method: Method<P, R>,
+  meta: WrapMethodMeta,
+  customWrapRpcMethod: unknown
+): Method<P, R> {
+  let wrapped = method;
+  if (typeof customWrapRpcMethod === 'function') {
+    wrapped = customWrapRpcMethod(method, meta);
+    if (typeof wrapped !== 'function') {
+      throw new Error(
+        `wrapMethod didn't return a function, got "${typeof wrapped}"`
+      );
+    }
+  } else if (
+    customWrapRpcMethod !== undefined &&
+    customWrapRpcMethod !== null
+  ) {
+    throw new Error(
+      `Invalid wrapMethod type, expected "function", got "${typeof customWrapRpcMethod}"`
+    );
+  }
+  return async (...args) => wrapped(...args);
+}
+
+export function createRpcHandler(
   methodsInit: [string, (...params: any[]) => Promise<any>][]
 ): NextApiHandler {
   const methods = new Map(methodsInit);
@@ -41,9 +74,3 @@ function createRpcHandler(
     }
   };
 }
-
-Object.defineProperty(exports, '__esModule', {
-  value: true,
-});
-
-exports.createRpcHandler = createRpcHandler;

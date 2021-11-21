@@ -22,7 +22,7 @@ async function withEnabledTest(
   }
 }
 
-afterAll(() => cleanup(FIXTURE_PATH));
+beforeAll(() => cleanup(FIXTURE_PATH));
 
 describe('basic-app', () => {
   let browser: Browser;

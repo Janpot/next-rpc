@@ -70,5 +70,12 @@ export async function startNext(
 }
 
 export async function cleanup(appPath: string): Promise<void> {
-  await fs.rm(path.resolve(appPath, './.next'), { recursive: true });
+  try {
+    await fs.rm(path.resolve(appPath, './.next'), { recursive: true });
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return;
+    }
+    throw err;
+  }
 }
