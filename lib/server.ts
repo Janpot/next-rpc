@@ -68,7 +68,7 @@ export function createRpcHandler(
         message = `Invalid value thrown in "${method}", must be instance of Error`,
         stack = undefined,
       } = error instanceof Error ? error : {};
-      return res.json({
+      return res.status(502).json({
         error: {
           name,
           message,
