@@ -31,8 +31,20 @@ function createRpcFetcher(url: string, method: string): NextRpcCall {
       },
     })
       .then(function (res) {
+        const statusError = new Error('Unexpected HTTP status ' + res.status);
+        if (res.status === 502) {
+          return res.json().then(
+            (json) => {
+              if (json.error && typeof json.error.message === 'string') {
+                return json;
+              }
+              return Promise.reject(statusError);
+            },
+            (err) => Promise.reject(statusError)
+          );
+        }
         if (!res.ok) {
-          throw new Error('Unexpected HTTP status ' + res.status);
+          throw statusError;
         }
         return res.json();
       })
