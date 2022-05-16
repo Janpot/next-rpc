@@ -57,6 +57,7 @@
     "@babel/core": "^7.16.0",
     "@babel/plugin-syntax-jsx": "^7.16.0",
     "@babel/plugin-syntax-typescript": "^7.16.0",
-    "babel-loader": "^8.2.3"
+    "babel-loader": "^8.2.3",
+    "regenerator-runtime": "^0.13.9"
   }
 }
