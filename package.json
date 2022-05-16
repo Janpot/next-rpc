@@ -29,7 +29,7 @@
     "get-port": "^6.0.0",
     "jest": "^27.3.1",
     "jest-circus": "^27.3.1",
-    "next": "^12.0.4",
+    "next": "^12.1.6",
     "next.js": "^1.0.3",
     "node-fetch": "^3.1.0",
     "prettier": "^2.2.1",
