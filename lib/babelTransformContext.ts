@@ -159,10 +159,12 @@ export default function (
 
         const { filename } = this.file.opts;
         const isApiRoute = filename && filename.startsWith(apiDir);
+        const isMiddleware =
+          filename && /(\/|\\)_middleware\.\w+$/.test(filename);
 
         if (isApiRoute) {
           visitApiHandler(babel, path);
-        } else {
+        } else if (!isMiddleware) {
           visitPage(babel, path);
         }
       },
