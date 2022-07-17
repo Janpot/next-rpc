@@ -183,7 +183,9 @@ export const config: NextRpcConfig = {
 
 ## Next.js request context
 
-> **warning:** This feature makes use of [experimental node.js APIs](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage). Running node.js > v12.17/v13.10 is required to use the following feature.
+> **⚠️ warning:** 
+>
+> request context is not supported in the Next.js [edge runtime](https://nextjs.org/docs/api-reference/edge-runtime) and won't be for the foreseeable future.
 
 This library completely hides the network layer. This makes it elegant to use, but also imposes limitations. To efficiently be able to implement things like cookie authentication, access to the underlying requests is required. To enable that, this library introduces `next-rpc/context`. An example:
 
