@@ -183,7 +183,7 @@ export const config: NextRpcConfig = {
 
 ## Next.js request context
 
-> **⚠️ warning:** 
+> **⚠️ warning:**
 >
 > request context is not supported in the Next.js [edge runtime](https://nextjs.org/docs/api-reference/edge-runtime) and won't be for the foreseeable future.
 
