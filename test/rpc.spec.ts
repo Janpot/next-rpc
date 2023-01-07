@@ -24,7 +24,7 @@ async function withEnabledTest(
 
 beforeAll(() => cleanup(FIXTURE_PATH));
 
-describe('basic-app', () => {
+describe('rpc', () => {
   let browser: Browser;
   let app: RunningNextApp;
 
