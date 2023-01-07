@@ -7,7 +7,7 @@ const FIXTURE_PATH = path.resolve(__dirname, './__fixtures__/context');
 
 afterAll(() => cleanup(FIXTURE_PATH));
 
-describe('basic-app', () => {
+describe('context', () => {
   let browser: Browser;
   let app: RunningNextApp;
 
@@ -23,10 +23,40 @@ describe('basic-app', () => {
     await Promise.all([browser && browser.close(), app && app.kill()]);
   });
 
-  test('should provide context when called through getServerSidProps', async () => {
+  test('should provide context when called through getServerSidProps, function declaration', async () => {
     const page = await browser.newPage();
     try {
       await page.goto(new URL('/getServerSideProps', app.url).toString());
+      expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should provide context when called through getServerSidProps, named function expression', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/getServerSideProps2', app.url).toString());
+      expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should provide context when called through getServerSidProps, arrow function', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/getServerSideProps3', app.url).toString());
+      expect(await page.$('#has-context')).not.toBeNull();
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('should provide context when called through getServerSidProps, anonymous function expression', async () => {
+    const page = await browser.newPage();
+    try {
+      await page.goto(new URL('/getServerSideProps4', app.url).toString());
       expect(await page.$('#has-context')).not.toBeNull();
     } finally {
       await page.close();
