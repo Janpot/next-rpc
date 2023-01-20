@@ -30,10 +30,21 @@ function createRpcFetcher(url: string, method: string): NextRpcCall {
         'content-type': 'application/json',
       },
     })
-      .then(function (res) {
-        if (!res.ok) {
+      .then(async function (res) {
+        if(!res.ok) {
+          const result = await res.json();
+
+          if(result._rpcRef === "method") {
+            return new Promise((resolve, reject) => {
+              reject({
+                ...result.error
+              });
+            })
+          };
+          
           throw new Error('Unexpected HTTP status ' + res.status);
-        }
+        };
+
         return res.json();
       })
       .then(function (json) {

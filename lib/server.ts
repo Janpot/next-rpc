@@ -17,6 +17,10 @@ function sendError(res: NextApiResponse, status: number, message: string) {
   res.status(status).json({ error: { message } });
 }
 
+function sendMethodError(res: NextApiResponse, status: number, message: string, payload: Object = {}) {
+  res.status(status).json({ _rpcRef: "method", error: { code: status, message, payload } });
+}
+
 export function createRpcMethod<P extends any[], R>(
   method: Method<P, R>,
   meta: WrapMethodMeta,
@@ -61,8 +65,15 @@ export function createRpcHandler(
 
     try {
       const result = await requestedFn(...params);
-      return res.json({ result });
+
+      if(result?._rpcType === "error") {
+        sendMethodError(res, result.code, result.message, result.payload)
+        return;
+      };
+
+      return res.json({ result: { ...result, message: "abc" } });
     } catch (error) {
+
       const {
         name = 'NextRpcError',
         message = `Invalid value thrown in "${method}", must be instance of Error`,
