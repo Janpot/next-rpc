@@ -183,7 +183,7 @@ export const config: NextRpcConfig = {
 
 ## Debugging `next-rpc`
 
-Since version 3.7.0, `next-rpc` uses [JSON-RPC](https://www.jsonrpc.org/specification) for its underlying messages structures. This makes it possible to use tools like [JSON RPC Chrome Viewer](https://chrome.google.com/webstore/detail/json-rpc-chrome-viewer/bfkookcjhlalpmeedppachhdkhmflbah) to introspect the rpc frames that are being transferred by `next-rpc`.
+Since version 3.7.0, `next-rpc` uses the [JSON-RPC](https://www.jsonrpc.org/specification) format for its messages. This makes it possible to use tools like [JSON RPC Chrome Viewer](https://chrome.google.com/webstore/detail/json-rpc-chrome-viewer/bfkookcjhlalpmeedppachhdkhmflbah) to introspect the rpc frames that are being transferred by `next-rpc`.
 
 ![JSON RPC Chrome Viewer screenshot](./json-rpc-chrome-viewer.jpeg)
 
