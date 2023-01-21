@@ -1,4 +1,24 @@
-import { JsonRpcRequest } from './jsonRpc';
+import { JsonRpcRequest, JsonRpcResponse } from './jsonRpc';
+import { isPlainObject, hasOwnProperty } from './validation';
+
+function isJsonRpc(result: unknown): result is JsonRpcResponse {
+  return (
+    isPlainObject(result) &&
+    hasOwnProperty(result, 'jsonrpc') &&
+    result.jsonrpc === '2.0' &&
+    hasOwnProperty(result, 'id') &&
+    (result.id === null ||
+      typeof result.id === 'string' ||
+      typeof result.id === 'number') &&
+    (!hasOwnProperty(result, 'error') ||
+      (hasOwnProperty(result, 'error') &&
+        isPlainObject(result.error) &&
+        hasOwnProperty(result.error, 'code') &&
+        typeof result.error.code === 'number' &&
+        hasOwnProperty(result.error, 'message') &&
+        typeof result.error.message === 'string'))
+  );
+}
 
 function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -16,6 +36,23 @@ function rewriteStacktrace(error: Error): Error {
   error.stack =
     error.stack && error.stack.replace(toReplaceRegex, '/_next/development');
   return error;
+}
+
+function getJsonRpcErrorMessage(code: number): string {
+  switch (code) {
+    case -32700:
+      return 'Parse error';
+    case -32600:
+      return 'Invalid Request';
+    case -32601:
+      return 'Method not found';
+    case -32602:
+      return 'Invalid params';
+    case -32603:
+      return 'Internal error';
+    default:
+      return 'Server error';
+  }
 }
 
 type NextRpcCall = (...params: any[]) => any;
@@ -37,22 +74,30 @@ function createRpcFetcher(url: string, method: string): NextRpcCall {
       },
     })
       .then(function (res) {
-        if (!res.ok) {
-          throw new Error('Unexpected HTTP status ' + res.status);
-        }
         return res.json();
       })
       .then(function (json) {
+        if (!isJsonRpc(json)) {
+          throw new Error('Invalid Response');
+        }
+
         if (json.error) {
-          let err = Object.assign(
+          if (json.error.code >= -32768 && json.error.code <= -32000) {
+            throw new Error(getJsonRpcErrorMessage(json.error.code));
+          }
+
+          let err: Error = Object.assign(
             new Error(json.error.message),
             json.error.data
           );
+
           if (process.env.NODE_ENV !== 'production') {
             err = rewriteStacktrace(err);
           }
+
           throw err;
         }
+
         return json.result;
       });
   };
