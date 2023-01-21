@@ -18,11 +18,23 @@ function rewriteStacktrace(error: Error): Error {
 
 type NextRpcCall = (...params: any[]) => any;
 
-function createRpcFetcher(url: string, method: string): NextRpcCall {
+let nextId = 1;
+
+export class JsonRpcError extends Error {
+  code: number;
+  constructor(message: string, code: number) {
+    super(message);
+    this.code = code;
+  }
+}
+
+export function createRpcFetcher(url: string, method: string): NextRpcCall {
   return function rpcFetch() {
     return fetch(url, {
       method: 'POST',
       body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: nextId++,
         method,
         params: Array.prototype.slice.call(arguments),
       }),
@@ -38,7 +50,13 @@ function createRpcFetcher(url: string, method: string): NextRpcCall {
       })
       .then(function (json) {
         if (json.error) {
-          let err = Object.assign(new Error(json.error.message), json.error);
+          if (json.error.code < 0) {
+            throw new JsonRpcError(json.error.message, json.error.code);
+          }
+          let err = Object.assign(
+            new Error(json.error.message),
+            json.error.data
+          );
           if (process.env.NODE_ENV !== 'production') {
             err = rewriteStacktrace(err);
           }
@@ -48,9 +66,3 @@ function createRpcFetcher(url: string, method: string): NextRpcCall {
       });
   };
 }
-
-Object.defineProperty(exports, '__esModule', {
-  value: true,
-});
-
-exports.createRpcFetcher = createRpcFetcher;

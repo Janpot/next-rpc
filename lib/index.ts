@@ -84,7 +84,7 @@ export default function init(withRpcConfig: WithRpcConfig = {}) {
 }
 
 // taken from https://github.com/vercel/next.js/blob/v12.1.5/packages/next/lib/find-pages-dir.ts
-export function findPagesDir(dir: string): string {
+function findPagesDir(dir: string): string {
   // prioritize ./pages over ./src/pages
   let curDir = path.join(dir, 'pages');
   if (fs.existsSync(curDir)) return curDir;
