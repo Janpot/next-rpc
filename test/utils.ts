@@ -64,7 +64,7 @@ export async function startNext(
   redirectOutput(app);
   await appReady(app.stdout);
   return {
-    url: `http://localhost:${port}/`,
+    url: `http://127.0.0.1:${port}/`,
     kill: app.kill.bind(app),
   };
 }
