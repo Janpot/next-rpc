@@ -20,7 +20,7 @@ type NextRpcCall = (...params: any[]) => any;
 
 let nextId = 1;
 
-export function createRpcFetcher(url: string, method: string): NextRpcCall {
+function createRpcFetcher(url: string, method: string): NextRpcCall {
   return function rpcFetch() {
     return fetch(url, {
       method: 'POST',
@@ -55,3 +55,9 @@ export function createRpcFetcher(url: string, method: string): NextRpcCall {
       });
   };
 }
+
+Object.defineProperty(exports, '__esModule', {
+  value: true,
+});
+
+exports.createRpcFetcher = createRpcFetcher;
