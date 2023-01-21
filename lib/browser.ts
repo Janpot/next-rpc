@@ -1,3 +1,5 @@
+import { JsonRpcRequest } from './jsonRpc';
+
 function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
@@ -29,7 +31,7 @@ function createRpcFetcher(url: string, method: string): NextRpcCall {
         id: nextId++,
         method,
         params: Array.prototype.slice.call(arguments),
-      }),
+      } satisfies JsonRpcRequest),
       headers: {
         'content-type': 'application/json',
       },

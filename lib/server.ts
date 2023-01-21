@@ -1,4 +1,5 @@
 import { NextApiHandler } from 'next';
+import { JsonRpcResponse } from './jsonRpc';
 
 export type Method<P extends any[], R> = (...params: P) => Promise<R>;
 export type WrapMethodMeta = {
@@ -54,7 +55,7 @@ export function createRpcHandler(
             cause: `HTTP method "${req.method}" is not allowed`,
           },
         },
-      });
+      } satisfies JsonRpcResponse);
       return;
     }
 
@@ -73,7 +74,7 @@ export function createRpcHandler(
             cause: `Method "${method}" is not a function`,
           },
         },
-      });
+      } satisfies JsonRpcResponse);
       return;
     }
 
@@ -83,7 +84,7 @@ export function createRpcHandler(
         jsonrpc: '2.0',
         id,
         result,
-      });
+      } satisfies JsonRpcResponse);
     } catch (error) {
       const {
         name = 'NextRpcError',
@@ -98,10 +99,10 @@ export function createRpcHandler(
           message,
           data: {
             name,
-            stack: process.env.NODE_ENV === 'production' ? undefined : stack,
+            ...(process.env.NODE_ENV === 'production' ? {} : { stack }),
           },
         },
-      });
+      } satisfies JsonRpcResponse);
     }
   };
 }
