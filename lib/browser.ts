@@ -20,14 +20,6 @@ type NextRpcCall = (...params: any[]) => any;
 
 let nextId = 1;
 
-export class JsonRpcError extends Error {
-  code: number;
-  constructor(message: string, code: number) {
-    super(message);
-    this.code = code;
-  }
-}
-
 export function createRpcFetcher(url: string, method: string): NextRpcCall {
   return function rpcFetch() {
     return fetch(url, {
@@ -50,9 +42,6 @@ export function createRpcFetcher(url: string, method: string): NextRpcCall {
       })
       .then(function (json) {
         if (json.error) {
-          if (json.error.code < 0) {
-            throw new JsonRpcError(json.error.message, json.error.code);
-          }
           let err = Object.assign(
             new Error(json.error.message),
             json.error.data
