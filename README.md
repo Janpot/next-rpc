@@ -187,6 +187,8 @@ Since version 3.7.0, `next-rpc` uses the [JSON-RPC](https://www.jsonrpc.org/spec
 
 ![JSON RPC Chrome Viewer screenshot](./json-rpc-chrome-viewer.jpeg)
 
+<sub>Disclaimer: I have no affiliation with this extension, use at your own discretion.</sub>
+
 ## Next.js request context
 
 > **⚠️ warning:**
