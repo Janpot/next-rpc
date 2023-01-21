@@ -107,9 +107,14 @@ describe('rpc', () => {
     );
     expect(response).toHaveProperty('status', 400);
     const responseBody = await response.json();
+    expect(responseBody).toHaveProperty(['error', 'code'], -32601);
     expect(responseBody).toHaveProperty(
       ['error', 'message'],
-      expect.stringMatching('"toString" is not a function')
+      expect.stringMatching('Method not found')
+    );
+    expect(responseBody).toHaveProperty(
+      ['error', 'data', 'cause'],
+      expect.stringMatching('Method "toString" is not a function')
     );
   });
 
@@ -127,6 +132,10 @@ describe('rpc', () => {
     const responseBody = await response.json();
     expect(responseBody).toHaveProperty(
       ['error', 'message'],
+      expect.stringMatching('Server error')
+    );
+    expect(responseBody).toHaveProperty(
+      ['error', 'data', 'cause'],
       expect.stringMatching('method "GET" is not allowed')
     );
   });

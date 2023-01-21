@@ -18,11 +18,15 @@ function rewriteStacktrace(error: Error): Error {
 
 type NextRpcCall = (...params: any[]) => any;
 
+let nextId = 1;
+
 function createRpcFetcher(url: string, method: string): NextRpcCall {
   return function rpcFetch() {
     return fetch(url, {
       method: 'POST',
       body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: nextId++,
         method,
         params: Array.prototype.slice.call(arguments),
       }),
@@ -38,7 +42,10 @@ function createRpcFetcher(url: string, method: string): NextRpcCall {
       })
       .then(function (json) {
         if (json.error) {
-          let err = Object.assign(new Error(json.error.message), json.error);
+          let err = Object.assign(
+            new Error(json.error.message),
+            json.error.data
+          );
           if (process.env.NODE_ENV !== 'production') {
             err = rewriteStacktrace(err);
           }

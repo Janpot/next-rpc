@@ -1,4 +1,4 @@
-import { NextApiHandler, NextApiResponse } from 'next';
+import { NextApiHandler } from 'next';
 
 export type Method<P extends any[], R> = (...params: P) => Promise<R>;
 export type WrapMethodMeta = {
@@ -11,10 +11,6 @@ export interface WrapMethod {
     method: Method<P, R>,
     meta: WrapMethodMeta
   ): Method<P, R>;
-}
-
-function sendError(res: NextApiResponse, status: number, message: string) {
-  res.status(status).json({ error: { message } });
 }
 
 export function createRpcMethod<P extends any[], R>(
@@ -47,21 +43,47 @@ export function createRpcHandler(
   const methods = new Map(methodsInit);
   return async (req, res) => {
     if (req.method !== 'POST') {
-      sendError(res, 405, `method "${req.method}" is not allowed`);
+      res.status(405);
+      res.json({
+        jsonrpc: '2.0',
+        id: null,
+        error: {
+          code: -32001,
+          message: 'Server error',
+          data: {
+            cause: `HTTP method "${req.method}" is not allowed`,
+          },
+        },
+      });
       return;
     }
 
-    const { method, params } = req.body;
+    const { id, method, params } = req.body;
     const requestedFn = methods.get(method);
 
     if (typeof requestedFn !== 'function') {
-      sendError(res, 400, `"${method}" is not a function`);
+      res.status(400);
+      res.json({
+        jsonrpc: '2.0',
+        id,
+        error: {
+          code: -32601,
+          message: 'Method not found',
+          data: {
+            cause: `Method "${method}" is not a function`,
+          },
+        },
+      });
       return;
     }
 
     try {
       const result = await requestedFn(...params);
-      return res.json({ result });
+      return res.json({
+        jsonrpc: '2.0',
+        id,
+        result,
+      });
     } catch (error) {
       const {
         name = 'NextRpcError',
@@ -69,10 +91,15 @@ export function createRpcHandler(
         stack = undefined,
       } = error instanceof Error ? error : {};
       return res.json({
+        jsonrpc: '2.0',
+        id,
         error: {
-          name,
+          code: 1,
           message,
-          stack: process.env.NODE_ENV === 'production' ? undefined : stack,
+          data: {
+            name,
+            stack: process.env.NODE_ENV === 'production' ? undefined : stack,
+          },
         },
       });
     }
